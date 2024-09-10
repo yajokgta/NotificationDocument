@@ -22,7 +22,7 @@ namespace NotificationDocument
             {
                 var emails = (from role in dbContext.MSTRoles
                               join userPerm in dbContext.MSTUserPermissions on role.RoleId equals userPerm.RoleId
-                              where role.NameEn.ToUpper() == excludeRole.ToUpper() || (role.NameTh.ToUpper() == excludeRole.ToUpper())
+                              where role.NameEn.ToUpper() == excludeRole.ToUpper() || role.NameTh.ToUpper() == excludeRole.ToUpper()
                               join emp in dbContext.MSTEmployees on userPerm.EmployeeId equals emp.EmployeeId
                               select emp.Email).ToList();
 

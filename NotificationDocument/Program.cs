@@ -123,12 +123,11 @@ namespace NotificationDocument
 
                     smtpClient.Send(mailMessage);
                     log.Info($"Send MemoId : {memoId} : Email sent successfully.");
-                    Console.WriteLine("Email sent successfully.");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to send email. Error: {ex.Message}");
+                log.Info($"Failed to send email. Error: {ex.Message}");
             }
         }
     }

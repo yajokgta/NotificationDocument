@@ -6,6 +6,10 @@ using System.Net.Mail;
 using System.Net;
 using log4net.Config;
 using log4net;
+using System.Runtime.InteropServices.ComTypes;
+using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace NotificationDocument
 {
@@ -44,41 +48,94 @@ namespace NotificationDocument
                 currentDate.ToString("dd/MM/yyyy")
             };
 
+            //var beforeDate = new DateTime(2024, 7, 24);
+
+            //for (DateTime date = beforeDate; date <= currentDate; date = date.AddDays(1))
+            //{
+            //    var addDays = new List<string>()
+            //    {
+            //        date.ToString("dd MMM yyyy"),
+            //        date.ToString("dd/MMM/yyyy"),
+            //        date.ToString("dd MM yyyy"),
+            //        date.ToString("dd/MM/yyyy")
+            //    };
+
+            //    currents.AddRange(addDays);
+            //}
+
             log.Info($"Format Current Date : {string.Join(",", currents)}");
 
             var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).Select(s => s.Email).ToList();
 
-            var memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") &&
+            //emails = new List<string>()
+            //{
+            //    "kitisak@techconsbiz.com"
+            //};
+
+            var memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
             dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value) )).ToList();
 
+            //memos.Distinct();
+
             log.Info($"Send Memo Count : {memos.Count()}");
+
+            var emailTemplateModel = dbContext.MSTEmailTemplates.FirstOrDefault(x => x.FormState == "NotificationDoc");
 
             foreach ( var memo in memos )
             {
                 memoId = memo.MemoId;
-                var emailTemplateModel = dbContext.MSTEmailTemplates.FirstOrDefault(x => x.FormState == "NotificationDoc");
 
                 var sURLToRequest = $"{ConfigurationSettings.AppSettings["TinyUrl"]}Request?MemoID={memo.MemoId}";
 
+                var effectiveDate = getValueAdvanceForm(memo.MAdvancveForm, effectiveLabel);
 
-                emailTemplateModel.EmailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest);
-                emailTemplateModel.EmailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest);
-                SendEmail(emailTemplateModel.EmailBody, emailTemplateModel.EmailSubject, emails);
+                var EmailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest, effectiveDate);
+                var EmailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest, effectiveDate);
+                SendEmail(EmailBody, EmailSubject, emails);
             }
             log.Info($"=============================================================================================================");
         }
+        public static string getValueAdvanceForm(string AdvanceForm, string label)
+        {
+            string setValue = "";
+            JObject jsonAdvanceForm = JObject.Parse(AdvanceForm);
+            if (jsonAdvanceForm.ContainsKey("items"))
+            {
+                JArray itemsArray = (JArray)jsonAdvanceForm["items"];
+                foreach (JObject jItems in itemsArray)
+                {
+                    JArray jLayoutArray = (JArray)jItems["layout"];
+                    foreach (JToken jLayout in jLayoutArray)
+                    {
+                        JObject jTemplate = (JObject)jLayout["template"];
+                        var getLabel = (String)jTemplate["label"];
+                        if (label == getLabel)
+                        {
+                            JObject jdata = (JObject)jLayout["data"];
+                            if (jdata != null)
+                            {
+                                if (jdata["value"] != null) setValue = jdata["value"].ToString();
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
 
-        public static string ReplaceEmail(string content, TRNMemo memo, string sURLToRequest)
+            return setValue;
+        }
+
+        public static string ReplaceEmail(string content, TRNMemo memo, string sURLToRequest,string effectiveDate)
         {
             content = content
 
                .Replace("[TRNMemo_DocumentNo]", memo.DocumentNo)
                .Replace("[TRNMemo_TemplateSubject]", memo.TemplateSubject)
                .Replace("[TRNMemo_RNameEn]", memo.RNameEn)
-               .Replace("[TRNMemo_RequestDate]", memo.RequestDate.Value.ToString("dd MMM yyyy"))
-               .Replace("[TRNActionHistory_ActorName]", dbContext.ViewEmployees.FirstOrDefault(x => x.EmployeeId.ToString() == memo.LastActionBy)?.NameEn)
+               //.Replace("[TRNMemo_RequestDate]", memo.RequestDate.Value.ToString("dd MMM yyyy"))
+               //.Replace("[TRNActionHistory_ActorName]", dbContext.ViewEmployees.FirstOrDefault(x => x.EmployeeId.ToString() == memo.LastActionBy)?.NameEn)
 
-               .Replace("[Effective_Date]", currentDate.ToString("dd MMM yyyy"))
+               .Replace("[Effective_Date]", effectiveDate)
                .Replace("[TRNMemo_StatusName]", memo.StatusName)
 
                .Replace("[TRNMemo_CompanyName]", memo.CompanyName)
@@ -92,6 +149,13 @@ namespace NotificationDocument
         public static DateTime TruncateTime(DateTime dateTime)
         {
             return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
+        }
+
+        public static bool IsValidEmail(string email)
+        {
+            string emailRegex = @"^[^\s@]+@[^\s@]+\.[^\s@]+$";
+
+            return Regex.IsMatch(email, emailRegex);
         }
 
         public static void SendEmail(string emailBody, string emailSubject, List<string> toList)
@@ -118,7 +182,10 @@ namespace NotificationDocument
 
                     foreach (string recipient in toList)
                     {
-                        mailMessage.To.Add(new MailAddress(recipient));
+                        if (IsValidEmail(recipient))
+                        {
+                            mailMessage.To.Add(new MailAddress(recipient.Trim().ToLower()));
+                        }
                     }
 
                     smtpClient.Send(mailMessage);

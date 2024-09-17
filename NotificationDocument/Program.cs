@@ -33,6 +33,23 @@ namespace NotificationDocument
                 return emails;
             }
         }
+        public static int IntervalTime
+        {
+            get
+            {
+                var _config = ConfigurationSettings.AppSettings["IntervalTime"];
+                return int.Parse(_config);
+            }
+        }
+
+        public static bool ManualMode
+        {
+            get
+            {
+                var _config = ConfigurationSettings.AppSettings["ManualMode"];
+                return bool.Parse(_config);
+            }
+        }
 
         public static DbContextDataContext dbContext = new DbContextDataContext(connectionString);
         public static DateTime currentDate = DateTime.Now;

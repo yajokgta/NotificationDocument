@@ -48,34 +48,42 @@ namespace NotificationDocument
                 currentDate.ToString("dd/MM/yyyy")
             };
 
-            //var beforeDate = new DateTime(2024, 7, 24);
+            var memos = new List<TRNMemo>();
 
-            //for (DateTime date = beforeDate; date <= currentDate; date = date.AddDays(1))
-            //{
-            //    var addDays = new List<string>()
-            //    {
-            //        date.ToString("dd MMM yyyy"),
-            //        date.ToString("dd/MMM/yyyy"),
-            //        date.ToString("dd MM yyyy"),
-            //        date.ToString("dd/MM/yyyy")
-            //    };
+            if (ManualMode)
+            {
+                var manuals = new List<string>();
 
-            //    currents.AddRange(addDays);
-            //}
+                Console.WriteLine("Enter StartDate (Ex: 2024-01-31) :");
+                var inputStartDate = Console.ReadLine();
+                Console.WriteLine("Enter EndDate (Ex: 2024-01-31) :");
+                var inputEndDate = Console.ReadLine();
 
-            log.Info($"Format Current Date : {string.Join(",", currents)}");
+                var startDate = GetDateByString(inputStartDate);
+                var endDate = GetDateByString(inputEndDate);
 
-            var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).Select(s => s.Email).ToList();
+                for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                {
+                    var addDays = new List<string>()
+                    {
+                        date.ToString("dd MMM yyyy"),
+                        date.ToString("dd/MMM/yyyy"),
+                        date.ToString("dd MM yyyy"),
+                        date.ToString("dd/MM/yyyy")
+                    };
 
-            //emails = new List<string>()
-            //{
-            //    "kitisak@techconsbiz.com"
-            //};
+                    manuals.AddRange(addDays);
+                }
 
-            var memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
-            dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value) )).ToList();
+                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
+                dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && manuals.Contains(a.obj_value))).ToList();
+            }
 
-            //memos.Distinct();
+            else
+            {
+                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" && x.ModifiedDate >= DateTime.Now.AddMinutes(IntervalTime) &&
+                dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
+            }
 
             log.Info($"Send Memo Count : {memos.Count()}");
 

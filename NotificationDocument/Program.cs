@@ -120,6 +120,12 @@ namespace NotificationDocument
             }
             log.Info($"=============================================================================================================");
         }
+        public static DateTime GetDateByString(string str)
+        {
+            var infoDate = str.Split('-');
+            return new DateTime(Convert.ToInt32(infoDate[0]), Convert.ToInt32(infoDate[1]), Convert.ToInt32(infoDate[2]));
+        }
+
         public static string getValueAdvanceForm(string AdvanceForm, string label)
         {
             string setValue = "";

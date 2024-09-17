@@ -66,8 +66,12 @@ namespace NotificationDocument
                 currentDate.ToString("dd/MM/yyyy")
             };
 
+            var memos = new List<TRNMemo>();
+
             if (ManualMode)
             {
+                var manuals = new List<string>();
+
                 Console.WriteLine("Enter StartDate (Ex: 2024-01-31) :");
                 var inputStartDate = Console.ReadLine();
                 Console.WriteLine("Enter EndDate (Ex: 2024-01-31) :");
@@ -86,19 +90,23 @@ namespace NotificationDocument
                         date.ToString("dd/MM/yyyy")
                     };
 
-                    currents.AddRange(addDays);
+                    manuals.AddRange(addDays);
                 }
+
+                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
+                dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && manuals.Contains(a.obj_value))).ToList();
             }
 
+            else
+            {
+                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" && x.ModifiedDate >= DateTime.Now.AddMinutes(IntervalTime) &&
+                dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
+            }
 
 
             log.Info($"Format Current Date : {string.Join(",", currents)}");
 
             var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).ToList();
-
-
-            var memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" && x.ModifiedDate >= DateTime.Now.AddMinutes(IntervalTime) &&
-            dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value) )).ToList();
 
             //memos.Distinct();
 

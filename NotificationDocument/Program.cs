@@ -34,6 +34,24 @@ namespace NotificationDocument
             }
         }
 
+        public static int IntervalTime
+        {
+            get
+            {
+                var _config = ConfigurationSettings.AppSettings["IntervalTime"];
+                return int.Parse(_config);
+            }
+        }
+
+        public static bool ManualMode
+        {
+            get
+            {
+                var _config = ConfigurationSettings.AppSettings["ManualMode"];
+                return bool.Parse(_config);
+            }
+        }
+
         public static DbContextDataContext dbContext = new DbContextDataContext(connectionString);
         public static DateTime currentDate = DateTime.Now;
         static void Main(string[] args)
@@ -48,31 +66,38 @@ namespace NotificationDocument
                 currentDate.ToString("dd/MM/yyyy")
             };
 
-            //var beforeDate = new DateTime(2024, 7, 24);
+            if (ManualMode)
+            {
+                Console.WriteLine("Enter StartDate (Ex: 2024-01-31) :");
+                var inputStartDate = Console.ReadLine();
+                Console.WriteLine("Enter EndDate (Ex: 2024-01-31) :");
+                var inputEndDate = Console.ReadLine();
 
-            //for (DateTime date = beforeDate; date <= currentDate; date = date.AddDays(1))
-            //{
-            //    var addDays = new List<string>()
-            //    {
-            //        date.ToString("dd MMM yyyy"),
-            //        date.ToString("dd/MMM/yyyy"),
-            //        date.ToString("dd MM yyyy"),
-            //        date.ToString("dd/MM/yyyy")
-            //    };
+                var startDate = GetDateByString(inputStartDate);
+                var endDate = GetDateByString(inputEndDate);
 
-            //    currents.AddRange(addDays);
-            //}
+                for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                {
+                    var addDays = new List<string>()
+                    {
+                        date.ToString("dd MMM yyyy"),
+                        date.ToString("dd/MMM/yyyy"),
+                        date.ToString("dd MM yyyy"),
+                        date.ToString("dd/MM/yyyy")
+                    };
+
+                    currents.AddRange(addDays);
+                }
+            }
+
+
 
             log.Info($"Format Current Date : {string.Join(",", currents)}");
 
-            var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).Select(s => s.Email).ToList();
+            var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).ToList();
 
-            //emails = new List<string>()
-            //{
-            //    "kitisak@techconsbiz.com"
-            //};
 
-            var memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
+            var memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" && x.ModifiedDate >= DateTime.Now.AddMinutes(IntervalTime) &&
             dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value) )).ToList();
 
             //memos.Distinct();
@@ -85,9 +110,29 @@ namespace NotificationDocument
             {
                 memoId = memo.MemoId;
 
+                var buGroup = getValueAdvanceForm(memo.MAdvancveForm, "Business Group");
+                var department = getValueAdvanceForm(memo.MAdvancveForm, "Department");
+                var documentNumber = getValueAdvanceForm(memo.MAdvancveForm, "Document Number");
+                var promulgation = getValueAdvanceForm(memo.MAdvancveForm, "การประกาศใช้");
+
                 var sURLToRequest = $"{ConfigurationSettings.AppSettings["TinyUrl"]}Request?MemoID={memo.MemoId}";
 
                 var effectiveDate = getValueAdvanceForm(memo.MAdvancveForm, effectiveLabel);
+
+                var listBU = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && x.col_label == "หน่วยงาน").Select(s => s.col_value).ToList();
+                var listEmployee = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "กรณีเฉพาะบุคคลที่เกี่ยวข้อง" && x.col_label == "ชื่อผู้เกี่ยวข้อง").Select(s => s.col_value).ToList();
+
+                if (!string.IsNullOrEmpty(buGroup))
+                {
+                    if (!string.IsNullOrEmpty(department) && department != "--Please Select--")
+                    {
+
+                    }
+                }
+                else if (!string.IsNullOrEmpty(department) && department != "--Please Select--")
+                {
+
+                }
 
                 var EmailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest, effectiveDate);
                 var EmailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest, effectiveDate);
@@ -95,6 +140,13 @@ namespace NotificationDocument
             }
             log.Info($"=============================================================================================================");
         }
+
+        public static DateTime GetDateByString(string str)
+        {
+            var infoDate = str.Split('-');
+            return new DateTime(Convert.ToInt32(infoDate[0]), Convert.ToInt32(infoDate[1]), Convert.ToInt32(infoDate[2]));
+        }
+
         public static string getValueAdvanceForm(string AdvanceForm, string label)
         {
             string setValue = "";

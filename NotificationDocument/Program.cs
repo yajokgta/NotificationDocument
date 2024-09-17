@@ -102,8 +102,8 @@ namespace NotificationDocument
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
             }
 
+            var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).Select(s => s.Email).ToList();
             log.Info($"Send Memo Count : {memos.Count()}");
-
             var emailTemplateModel = dbContext.MSTEmailTemplates.FirstOrDefault(x => x.FormState == "NotificationDoc");
 
             foreach ( var memo in memos )
@@ -118,6 +118,7 @@ namespace NotificationDocument
                 var EmailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest, effectiveDate);
                 SendEmail(EmailBody, EmailSubject, emails);
             }
+
             log.Info($"=============================================================================================================");
         }
         public static DateTime GetDateByString(string str)

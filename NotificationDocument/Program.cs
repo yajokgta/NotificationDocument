@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Data.Linq;
+using System.Globalization;
 
 namespace NotificationDocument
 {
@@ -75,14 +76,14 @@ namespace NotificationDocument
             log.Info($"=============================================================================================================");
             var currents = new List<string>()
             {
-                currentDate.ToString("dd MMM yyyy"),
-                currentDate.ToString("dd/MMM/yyyy"),
-                currentDate.ToString("dd MM yyyy"),
-                currentDate.ToString("dd/MM/yyyy"),
-                currentDate.AddDays(-1).ToString("dd MMM yyyy"),
-                currentDate.AddDays(-1).ToString("dd/MMM/yyyy"),
-                currentDate.AddDays(-1).ToString("dd MM yyyy"),
-                currentDate.AddDays(-1).ToString("dd/MM/yyyy")
+                currentDate.ToString("dd MMM yyyy", new CultureInfo("en-GB")),
+                currentDate.ToString("dd/MMM/yyyy", new CultureInfo("en-GB")),
+                currentDate.ToString("dd MM yyyy", new CultureInfo("en-GB")),
+                currentDate.ToString("dd/MM/yyyy", new CultureInfo("en-GB")),
+                currentDate.AddDays(-1).ToString("dd MMM yyyy", new CultureInfo("en-GB")),
+                currentDate.AddDays(-1).ToString("dd/MMM/yyyy", new CultureInfo("en-GB")),
+                currentDate.AddDays(-1).ToString("dd MM yyyy", new CultureInfo("en-GB")),
+                currentDate.AddDays(-1).ToString("dd/MM/yyyy", new CultureInfo("en-GB"))
             };
             
 
@@ -104,10 +105,10 @@ namespace NotificationDocument
                 {
                     var addDays = new List<string>()
                     {
-                        date.ToString("dd MMM yyyy"),
-                        date.ToString("dd/MMM/yyyy"),
-                        date.ToString("dd MM yyyy"),
-                        date.ToString("dd/MM/yyyy")
+                        date.ToString("dd MMM yyyy", new CultureInfo("en-GB")),
+                        date.ToString("dd/MMM/yyyy", new CultureInfo("en-GB")),
+                        date.ToString("dd MM yyyy", new CultureInfo("en-GB")),
+                        date.ToString("dd/MM/yyyy", new CultureInfo("en-GB"))
                     };
 
                     manuals.AddRange(addDays);
@@ -115,17 +116,17 @@ namespace NotificationDocument
 
                 memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && manuals.Contains(a.obj_value))).ToList();
+                log.Info($"Date Format: {string.Join(",", manuals)}");
             }
 
             else
             {
                 memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
+                log.Info($"Date Format: {string.Join(",", currents)}");
             }
 
             log.Info($"Send Memo Count : {memos.Count()}");
-
-            var emailTemplateModel = dbContext.MSTEmailTemplates.FirstOrDefault(x => x.FormState == "NotificationDoc");
 
             var viewEmployeeQuery = dbContext.ViewEmployees.Where(x => x.IsActive == true);
 
@@ -350,6 +351,7 @@ namespace NotificationDocument
         public static void SendEmail(List<ViewEmployee> employees, TRNMemo memo, String Documentnumber, string ccPersonData, string additionalEmployees)
         {
             employees.RemoveAll(x => excludeRoles.Contains(x.Email));
+            employees.Distinct();
 
             log.Info($"Send : {string.Join("|", employees.Select(s => s.Email))}");
             var AllEmployee = dbContext.ViewEmployees.Where(x => x.IsActive == true);

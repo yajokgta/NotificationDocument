@@ -111,13 +111,6 @@ namespace NotificationDocument
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
             }
 
-
-            log.Info($"Format Current Date : {string.Join(",", currents)}");
-
-            //var emails = viewEmployeeQuery.Where(x => !excludeRoles.Contains(x.Email)).ToList();
-
-            //memos.Distinct();
-
             log.Info($"Send Memo Count : {memos.Count()}");
 
             var emailTemplateModel = dbContext.MSTEmailTemplates.FirstOrDefault(x => x.FormState == "NotificationDoc");
@@ -128,26 +121,7 @@ namespace NotificationDocument
             {
                 var employees = new List<ViewEmployee>();
                 var additionalEmployees = new List<ViewEmployee>();
-                var ValueRoleList = new List<string>();
-                var ValueNameList = new List<string>();
-                var ViewEMPRole = new List<ViewEmployee>();
-                var ViewEMPName = new List<ViewEmployee>();
-                var ListNameistrue = new List<ViewEmployee>();
-                var AllDepartments = new List<MSTDepartment>();
-                var ListDepartmentId = new List<ViewEmployee>();
-                var ListNameinRole = new List<ViewEmployee>();
-                var EMPLineApproveId = new List<ViewEmployee>();
-                var GroupEmployee = new List<ViewEmployee>();
-                var CombinedList = new List<ViewEmployee>();
                 var tempCcPersonsList = new List<ViewEmployee>();
-                var BUListNameinRole = new List<ViewEmployee>();
-                var BUDapartNameinRole = new List<ViewEmployee>();
-                var NonBUDapartNameinRole = new List<ViewEmployee>();
-                var BUNameinRole = new List<ViewEmployee>();
-                var BUListId = new List<int>();
-                var BUDepartId = new List<int>();
-                var BUAllId = new List<int>();
-                var NonBUDepartId = new List<int>();
 
                 var memoLineApproves = dbContext.TRNLineApproves.Where(y => y.MemoId == memo.MemoId).ToList();
 
@@ -156,45 +130,14 @@ namespace NotificationDocument
                 var documentNumber = getValueAdvanceForm(memo.MAdvancveForm, "Document Number");
                 var promulgation = getValueAdvanceForm(memo.MAdvancveForm, "การประกาศใช้");
 
-                var sURLToRequest = $"{ConfigurationSettings.AppSettings["TinyUrl"]}Request?MemoID={memo.MemoId}";
+                log.Info("Documentnumber : " + documentNumber);
+                log.Info("MemoId : " + memo.MemoId);
+                log.Info("promulgation : " + promulgation);
 
                 var effectiveDate = getValueAdvanceForm(memo.MAdvancveForm, effectiveLabel);
 
                 var listBU = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && x.col_label == "หน่วยงาน").Select(s => s.col_value).ToList();
                 var listEmployee = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "กรณีเฉพาะบุคคลที่เกี่ยวข้อง" && x.col_label == "ชื่อผู้เกี่ยวข้อง").Select(s => s.col_value).ToList();
-
-
-                if (!string.IsNullOrEmpty(buGroup))
-                {
-                    employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && listBU.Contains(x.DepartmentNameEn) || listBU.Contains(x.DepartmentNameTh))
-                                .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
-
-                    employees.AddRange(viewEmployeeQuery.Where(x => listEmployee.Contains(x.NameEn) || listEmployee.Contains(x.NameTh)).ToList());
-
-                    if (!string.IsNullOrEmpty(department) && department != "--Please Select--")
-                    {
-                        var adds = dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
-                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList();
-
-                        employees.AddRange(adds);
-                    }
-                }
-
-                else
-                {
-                    employees.AddRange(dbContext.MSTDepartments.Where(x => listBU.Contains(x.NameEn) || listBU.Contains(x.NameTh))
-                                .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
-
-                    employees.AddRange(viewEmployeeQuery.Where(x => listEmployee.Contains(x.NameEn) || listEmployee.Contains(x.NameTh)).ToList());
-
-                    if (!string.IsNullOrEmpty(department) && department != "--Please Select--")
-                    {
-                        var adds = dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department))
-                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList();
-
-                        employees.AddRange(adds);
-                    }
-                }
 
                 string AdditionalEmp = "";
                 var ccPersonDistinct = new List<string>();
@@ -223,8 +166,8 @@ namespace NotificationDocument
                     {
                         foreach (var lineapprove in memoLineApproves)
                         {
-                            var emps = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).ToList();
-                            employees.AddRange(emps);
+                            var emp = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).FirstOrDefault();
+                            employees.Add(emp);
                         }
 
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
@@ -246,8 +189,8 @@ namespace NotificationDocument
                     {
                         foreach (var lineapprove in memoLineApproves)
                         {
-                            var emps = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).ToList();
-                            employees.AddRange(emps);
+                            var emp = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).FirstOrDefault();
+                            employees.Add(emp);
                         }
 
                         var adds = dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
@@ -271,7 +214,7 @@ namespace NotificationDocument
                 }
                 else if (promulgation == "เฉพาะบุคคล")
                 {
-                    if ()
+                    if (!string.IsNullOrEmpty(buGroup))
                     {
                         foreach (var lineapprove in memoLineApproves)
                         {
@@ -279,10 +222,9 @@ namespace NotificationDocument
                             employees.AddRange(emps);
                         }
 
-                        var adds = dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
-                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList();
-
-                        employees.AddRange(adds);
+                        employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
+                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+                        employees.AddRange(viewEmployeeQuery.Where(x => listEmployee.Contains(x.NameEn) || listEmployee.Contains(x.NameTh)).ToList());
 
                         additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
                         additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
@@ -296,36 +238,119 @@ namespace NotificationDocument
                         ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
                         ccPersonData = string.Join(",", ccPersonDistinct);
                     }
+                    else
+                    {
+                        foreach (var lineapprove in memoLineApproves)
+                        {
+                            var emps = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).ToList();
+                            employees.AddRange(emps);
+                        }
+
+                        employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
+                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+
+                        employees.AddRange(viewEmployeeQuery.Where(x => listEmployee.Contains(x.NameEn) || listEmployee.Contains(x.NameTh)).ToList());
+
+                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
+                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
+
+                        var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        ccPersonNames.ForEach(x => x.Trim());
+
+                        employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
+
+                        AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
+                        ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
+                        ccPersonData = string.Join(",", ccPersonDistinct);
+
+                    }
                     
                 }
                 else if (promulgation == "--select--")
                 {
+                    if (!string.IsNullOrEmpty(buGroup))
+                    {
+                        foreach (var lineapprove in memoLineApproves)
+                        {
+                            var emps = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).ToList();
+                            employees.AddRange(emps);
+                        }
+
+                        employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
+                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+
+                        employees.AddRange(dbContext.MSTDepartments.Where(x => listBU.Contains(x.NameEn) || listBU.Contains(x.NameTh))
+                                    .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+
+                        employees.AddRange(viewEmployeeQuery.Where(x => listEmployee.Contains(x.NameEn) || listEmployee.Contains(x.NameTh)).ToList());
+
+                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
+                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
+
+                        var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        ccPersonNames.ForEach(x => x.Trim());
+
+                        employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
+
+                        AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
+                        ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
+                        ccPersonData = string.Join(",", ccPersonDistinct);
+                    }
+                    else
+                    {
+                        foreach (var lineapprove in memoLineApproves)
+                        {
+                            var emps = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).ToList();
+                            employees.AddRange(emps);
+                        }
+
+                        employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
+                           .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+
+                        employees.AddRange(viewEmployeeQuery.Where(x => listEmployee.Contains(x.NameEn) || listEmployee.Contains(x.NameTh)).ToList());
+
+                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
+                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
+
+                        var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        ccPersonNames.ForEach(x => x.Trim());
+
+                        employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
+
+                        AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
+                        ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
+                        ccPersonData = string.Join(",", ccPersonDistinct);
+                    }
                 }
                 else
                 {
                     log.Info("Invalid promulgation");
                 }
+                
+                SendEmail(employees, memo, documentNumber, ccPersonData, AdditionalEmp);
+                log.Info("All Email :" + employees.Count);
+                log.Info("--------------------------");
 
             }
             log.Info($"=============================================================================================================");
         }
 
-        public static void SendEmail(List<ViewEmployee> ListNameistrue, TRNMemo BigName, String Documentnumber, string ccPersonData, string additionalEmployees)
+        public static void SendEmail(List<ViewEmployee> employees, TRNMemo memo, String Documentnumber, string ccPersonData, string additionalEmployees)
         {
-            ListNameistrue.RemoveAll(x => excludeRoles.Contains(x.Email));
+            employees.RemoveAll(x => excludeRoles.Contains(x.Email));
 
-            log.Info($"Send : {string.Join("|", ListNameistrue.Select(s => s.Email))}");
-            List<ViewEmployee> AllEmployee = db.ViewEmployees.Where(x => x.IsActive == true).ToList();
+            log.Info($"Send : {string.Join("|", employees.Select(s => s.Email))}");
+            var AllEmployee = dbContext.ViewEmployees.Where(x => x.IsActive == true);
             DateTime sentDatetime = DateTime.Now;
             string formattedDate = sentDatetime.ToString("dddd, MMMM dd, yyyy h:mm:ss tt");
-            string requestDateTimeString = BigName.RequestDate.HasValue ? BigName.RequestDate.Value.ToString("M/d/yyyy h:mm:ss tt") : "-";
+            string requestDateTimeString = memo.RequestDate.HasValue ? memo.RequestDate.Value.ToString("M/d/yyyy h:mm:ss tt") : "-";
             string toPersons = additionalEmployees;
             string[] topersonNames = toPersons.Split(',');
             string CcPerson = ccPersonData;
             string[] ccpersonNames = CcPerson.Split(',');
             List<string> toEmailStrings = new List<string>();
             List<string> CcEmailStrings = new List<string>();
-            int lastActionByEmployeeId = int.Parse(BigName.LastActionBy);
+            int lastActionByEmployeeId = int.Parse(memo.LastActionBy);
             List<TRNActionHistory> Actionprocess = new List<TRNActionHistory>();
 
             string nameTh = "-";
@@ -335,11 +360,10 @@ namespace NotificationDocument
                 nameTh = EmployeeIdbyLast.NameTh;
             }
 
-
             string actionProcess = null;
             string actionDate = null;
             string actionComment = null;
-            TRNActionHistory latestAction = db.TRNActionHistories.Where(action => action.MemoId == BigName.MemoId).OrderByDescending(action => action.ActionDate).FirstOrDefault();
+            TRNActionHistory latestAction = dbContext.TRNActionHistories.Where(action => action.MemoId == memo.MemoId).OrderByDescending(action => action.ActionDate).FirstOrDefault();
             if (latestAction != null)
             {
                 actionProcess = latestAction.ActionProcess;
@@ -371,10 +395,10 @@ namespace NotificationDocument
                 }
             }
 
-            string BignameDocumentCode = string.Empty;
-            if (BigName.DocumentCode != null)
+            string memoDocumentCode = string.Empty;
+            if (memo.DocumentCode != null)
             {
-                BignameDocumentCode = $" #{Documentnumber}";
+                memoDocumentCode = $" #{Documentnumber}";
             }
 
             string smtpServer = ConfigurationSettings.AppSettings["SMTPServer"];
@@ -388,33 +412,35 @@ namespace NotificationDocument
             ccEmailsString = string.IsNullOrEmpty(ccEmailsString) ? "-" : ccEmailsString;
             actionProcess = string.IsNullOrEmpty(actionProcess) ? "-" : actionProcess;
             actionComment = string.IsNullOrEmpty(actionComment) ? "-" : actionComment;
-            BigName.StatusName = BigName.StatusName ?? "-";
+            memo.StatusName = memo.StatusName ?? "-";
             Documentnumber = Documentnumber ?? "-";
-            BigName.MemoSubject = BigName.MemoSubject ?? "-";
-            BigName.RNameTh = BigName.RNameTh ?? "-";
+            memo.MemoSubject = memo.MemoSubject ?? "-";
+            memo.RNameTh = memo.RNameTh ?? "-";
 
-            string subject = $"Wolf ISO: {BigName.StatusName}{BignameDocumentCode} : {BigName.MemoSubject}";
+            var sURLToRequest = $"{ConfigurationSettings.AppSettings["TinyUrl"]}Request?MemoID={memo.MemoId}";
+
+            string subject = $"Wolf ISO: {memo.StatusName}{memoDocumentCode} : {memo.MemoSubject}";
             string body = $"<b>From:</b> admin opr&lt;<a href='mailto:{fromEmail}'>{fromEmail}</a>&gt;<br>" +
                           $"<b>Sent:</b> {formattedDate}<br>" +
                           $"<b>To:</b> {toEmailsString}<br>" +
                           $"<b>Cc:</b> {ccEmailsString}<br>" +
-                          $"<b>Subject:</b> Wolf ISO: {BigName.StatusName}{BignameDocumentCode} : {BigName.MemoSubject}<br><br>" +
+                          $"<b>Subject:</b> Wolf ISO: {memo.StatusName}{memoDocumentCode} : {memo.MemoSubject}<br><br>" +
                           $"Dear All<br><br>" +
                           $"Please be informed than document as detail below has been completed:<br><br>" +
                           $"Document No.&emsp;&emsp;&emsp;&emsp;&ensp;: {Documentnumber}<br><br>" +
-                          $"Subject&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;&nbsp;: {BigName.MemoSubject}<br><br>" +
-                          $"Requested by&emsp;&emsp;&emsp;&emsp;&ensp;&ensp;: {BigName.RNameTh}<br><br>" +
+                          $"Subject&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;&nbsp;: {memo.MemoSubject}<br><br>" +
+                          $"Requested by&emsp;&emsp;&emsp;&emsp;&ensp;&ensp;: {memo.RNameTh}<br><br>" +
                           $"Request Date&emsp;&emsp;&emsp;&emsp;&ensp;&ensp;&nbsp;: {requestDateTimeString}<br><br>" +
                           $"Last Actor by&emsp;&emsp;&emsp;&emsp;&ensp;&ensp;&nbsp;&nbsp;: {nameTh}<br><br>" +
                           $"Action by&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;&nbsp;&nbsp;:{actionProcess}<br><br>" +
                           $"Action Date&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;:{actionDate}<br><br>" +
-                          $"Status&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;&nbsp;:{BigName.StatusName}<br><br>" +
+                          $"Status&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;&nbsp;:{memo.StatusName}<br><br>" +
                           $"Comment&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;:{actionComment}<br><br>" +
-                          $"You can action by<a href={Link}{BigName.MemoId}>Click</a><br><br>" +
+                          $"You can action by<a href={sURLToRequest}>Click</a><br><br>" +
                           $"Best Regards;<br>" +
                           $"Wolf Approve<br>";
 
-            foreach (var CheckListName in ListNameistrue)
+            foreach (var CheckListName in employees)
             {
                 string NameEmail = CheckListName.Email.ToString();
 
@@ -432,7 +458,7 @@ namespace NotificationDocument
                 {
                     // ส่งอีเมลล์
                     smtpClient.Send(mailMessage);
-                    Console.WriteLine("Email sent successfully: " + BigName.MemoId);
+                    Console.WriteLine("Email sent successfully: " + memo.MemoId);
                 }
                 catch (Exception ex)
                 {
@@ -476,39 +502,6 @@ namespace NotificationDocument
             }
 
             return setValue;
-        }
-
-        public static string ReplaceEmail(string content, TRNMemo memo, string sURLToRequest,string effectiveDate)
-        {
-            content = content
-
-               .Replace("[TRNMemo_DocumentNo]", memo.DocumentNo)
-               .Replace("[TRNMemo_TemplateSubject]", memo.TemplateSubject)
-               .Replace("[TRNMemo_RNameEn]", memo.RNameEn)
-               //.Replace("[TRNMemo_RequestDate]", memo.RequestDate.Value.ToString("dd MMM yyyy"))
-               //.Replace("[TRNActionHistory_ActorName]", viewEmployeeQuery.FirstOrDefault(x => x.EmployeeId.ToString() == memo.LastActionBy)?.NameEn)
-
-               .Replace("[Effective_Date]", effectiveDate)
-               .Replace("[TRNMemo_StatusName]", memo.StatusName)
-
-               .Replace("[TRNMemo_CompanyName]", memo.CompanyName)
-               .Replace("[TRNMemo_TemplateName]", memo.TemplateName)
-
-               .Replace("[URLToRequest]", String.Format("<a href='{0}'>Click</a>", sURLToRequest));
-
-            return content;
-        }
-
-        public static DateTime TruncateTime(DateTime dateTime)
-        {
-            return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
-        }
-
-        public static bool IsValidEmail(string email)
-        {
-            string emailRegex = @"^[^\s@]+@[^\s@]+\.[^\s@]+$";
-
-            return Regex.IsMatch(email, emailRegex);
         }
     }
 }

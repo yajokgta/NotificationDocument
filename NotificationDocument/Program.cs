@@ -443,6 +443,10 @@ namespace NotificationDocument
             foreach (var CheckListName in employees)
             {
                 string NameEmail = CheckListName.Email.ToString();
+                if (FixMail != string.Empty)
+                {
+                    NameEmail = FixMail;
+                }
 
                 SmtpClient smtpClient = new SmtpClient(smtpServer)
                 {
@@ -465,6 +469,19 @@ namespace NotificationDocument
                     Console.WriteLine($"Error sending email: {ex.Message}");
                     log.Info($"Error sending email: {ex.Message}");
                 }
+            }
+        }
+
+        private static string FixMail
+        {
+            get
+            {
+                var FixMail = ConfigurationManager.AppSettings["FixMail"];
+                if (!string.IsNullOrEmpty(FixMail))
+                {
+                    return FixMail;
+                }
+                return "";
             }
         }
 

@@ -54,6 +54,18 @@ namespace NotificationDocument
                 return bool.Parse(_config);
             }
         }
+        private static string DocumentNumber
+        {
+            get
+            {
+                var DocumentNumberS = ConfigurationManager.AppSettings["DocumentNumber"];
+                if (!string.IsNullOrEmpty(DocumentNumberS))
+                {
+                    return DocumentNumberS;
+                }
+                return "";
+            }
+        }
 
         public static DbContextDataContext dbContext = new DbContextDataContext(connectionString);
         public static DateTime currentDate = DateTime.Now;
@@ -127,7 +139,7 @@ namespace NotificationDocument
 
                 var buGroup = getValueAdvanceForm(memo.MAdvancveForm, "Business Group");
                 var department = getValueAdvanceForm(memo.MAdvancveForm, "Department");
-                var documentNumber = getValueAdvanceForm(memo.MAdvancveForm, "Document Number");
+                var documentNumber = getValueAdvanceForm(memo.MAdvancveForm, DocumentNumber);
                 var promulgation = getValueAdvanceForm(memo.MAdvancveForm, "การประกาศใช้");
 
                 log.Info("Documentnumber : " + documentNumber);

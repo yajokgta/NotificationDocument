@@ -206,10 +206,8 @@ namespace NotificationDocument
                             employees.Add(emp);
                         }
 
-                        var adds = dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
-                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList();
-
-                        employees.AddRange(adds);
+                        employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
+                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
                         additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
                         additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());

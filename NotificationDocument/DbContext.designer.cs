@@ -761,6 +761,22 @@ namespace NotificationDocument
 				return this.GetTable<ViewTRNMemoMAdvancveForm>();
 			}
 		}
+		
+		public System.Data.Linq.Table<ViewBU> ViewBUs
+		{
+			get
+			{
+				return this.GetTable<ViewBU>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ViewRole> ViewRoles
+		{
+			get
+			{
+				return this.GetTable<ViewRole>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MSTAccount")]
@@ -22132,6 +22148,276 @@ namespace NotificationDocument
 				if ((this._obj_value_item != value))
 				{
 					this._obj_value_item = value;
+				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ViewBU")]
+	public partial class ViewBU
+	{
+		
+		private int _BUID;
+		
+		private string _BUCode;
+		
+		private string _NameTh;
+		
+		private int _DepartmentId;
+		
+		private string _DepartmentNameTh;
+		
+		private string _DepartmentNameEn;
+		
+		private string _BUDESC;
+		
+		public ViewBU()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUID", DbType="Int NOT NULL")]
+		public int BUID
+		{
+			get
+			{
+				return this._BUID;
+			}
+			set
+			{
+				if ((this._BUID != value))
+				{
+					this._BUID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUCode", DbType="NVarChar(50)")]
+		public string BUCode
+		{
+			get
+			{
+				return this._BUCode;
+			}
+			set
+			{
+				if ((this._BUCode != value))
+				{
+					this._BUCode = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NameTh", DbType="NVarChar(500)")]
+		public string NameTh
+		{
+			get
+			{
+				return this._NameTh;
+			}
+			set
+			{
+				if ((this._NameTh != value))
+				{
+					this._NameTh = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DepartmentId", DbType="Int NOT NULL")]
+		public int DepartmentId
+		{
+			get
+			{
+				return this._DepartmentId;
+			}
+			set
+			{
+				if ((this._DepartmentId != value))
+				{
+					this._DepartmentId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DepartmentNameTh", DbType="NVarChar(500)")]
+		public string DepartmentNameTh
+		{
+			get
+			{
+				return this._DepartmentNameTh;
+			}
+			set
+			{
+				if ((this._DepartmentNameTh != value))
+				{
+					this._DepartmentNameTh = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DepartmentNameEn", DbType="NVarChar(500)")]
+		public string DepartmentNameEn
+		{
+			get
+			{
+				return this._DepartmentNameEn;
+			}
+			set
+			{
+				if ((this._DepartmentNameEn != value))
+				{
+					this._DepartmentNameEn = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BUDESC", DbType="NVarChar(553)")]
+		public string BUDESC
+		{
+			get
+			{
+				return this._BUDESC;
+			}
+			set
+			{
+				if ((this._BUDESC != value))
+				{
+					this._BUDESC = value;
+				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ViewRole")]
+	public partial class ViewRole
+	{
+		
+		private int _RoleId;
+		
+		private string _RoleNameTh;
+		
+		private string _RoleNameEn;
+		
+		private System.Nullable<int> _EmployeeId;
+		
+		private string _EmpNameEn;
+		
+		private string _EmpNameTh;
+		
+		private System.Nullable<int> _Seq;
+		
+		public ViewRole()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleId", DbType="Int NOT NULL")]
+		public int RoleId
+		{
+			get
+			{
+				return this._RoleId;
+			}
+			set
+			{
+				if ((this._RoleId != value))
+				{
+					this._RoleId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleNameTh", DbType="NVarChar(500)")]
+		public string RoleNameTh
+		{
+			get
+			{
+				return this._RoleNameTh;
+			}
+			set
+			{
+				if ((this._RoleNameTh != value))
+				{
+					this._RoleNameTh = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleNameEn", DbType="NVarChar(500)")]
+		public string RoleNameEn
+		{
+			get
+			{
+				return this._RoleNameEn;
+			}
+			set
+			{
+				if ((this._RoleNameEn != value))
+				{
+					this._RoleNameEn = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EmployeeId", DbType="Int")]
+		public System.Nullable<int> EmployeeId
+		{
+			get
+			{
+				return this._EmployeeId;
+			}
+			set
+			{
+				if ((this._EmployeeId != value))
+				{
+					this._EmployeeId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EmpNameEn", DbType="NVarChar(500)")]
+		public string EmpNameEn
+		{
+			get
+			{
+				return this._EmpNameEn;
+			}
+			set
+			{
+				if ((this._EmpNameEn != value))
+				{
+					this._EmpNameEn = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EmpNameTh", DbType="NVarChar(500)")]
+		public string EmpNameTh
+		{
+			get
+			{
+				return this._EmpNameTh;
+			}
+			set
+			{
+				if ((this._EmpNameTh != value))
+				{
+					this._EmpNameTh = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Seq", DbType="Int")]
+		public System.Nullable<int> Seq
+		{
+			get
+			{
+				return this._Seq;
+			}
+			set
+			{
+				if ((this._Seq != value))
+				{
+					this._Seq = value;
 				}
 			}
 		}

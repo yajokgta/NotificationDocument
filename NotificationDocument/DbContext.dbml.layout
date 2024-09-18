@@ -398,14 +398,14 @@
         <elementListCompartment Id="8a125a3b-95fd-436c-b68c-f9d7ee6e09d8" absoluteBounds="30.765, 4.21, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(23.75 : 16.6402498372396); (24.5 : 16.6402498372396)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(23.75 : 16.6402498372396); (24.5 : 16.6402498372396)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/DbContextDataContext/Job/Job_State" />
       <nodes>
         <classShapeMoniker Id="6a1bbca9-11e0-453c-bb8b-1a56c4e20d79" />
         <classShapeMoniker Id="4ab6420f-cd1c-44d6-bba4-14be8bad7429" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(23.75 : 15.1931469726562); (24.5 : 15.1931469726562)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(23.75 : 15.1931469726562); (24.5 : 15.1931469726562)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/DbContextDataContext/Job/Job_JobParameter" />
       <nodes>
         <classShapeMoniker Id="6a1bbca9-11e0-453c-bb8b-1a56c4e20d79" />
@@ -422,6 +422,18 @@
       <DataClassMoniker Name="/DbContextDataContext/ViewTRNMemoMAdvancveForm" />
       <nestedChildShapes>
         <elementListCompartment Id="6ddab08a-4ca7-44ba-8ccb-723774570813" absoluteBounds="32.89, 22.96, 1.9700000000000002, 4.2877197265625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="9c503019-a98d-4e3a-a97f-881bc0c5b1f9" absoluteBounds="34.375, 13.375, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/DbContextDataContext/ViewBU" />
+      <nestedChildShapes>
+        <elementListCompartment Id="bf42e77a-a3dc-4593-bdca-5e7871bbf067" absoluteBounds="34.39, 13.835, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="5e9c957c-28bd-4294-ae8a-4c6424575989" absoluteBounds="0.75, 22.75, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/DbContextDataContext/ViewRole" />
+      <nestedChildShapes>
+        <elementListCompartment Id="e386f21f-36c1-4275-91c8-8a4b67b6cc24" absoluteBounds="0.765, 23.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
   </nestedChildShapes>

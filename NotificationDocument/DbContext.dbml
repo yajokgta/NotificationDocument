@@ -1122,4 +1122,26 @@
       <Column Name="obj_value_item" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.ViewBU" Member="ViewBUs">
+    <Type Name="ViewBU">
+      <Column Name="BUID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BUCode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="NameTh" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="DepartmentId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DepartmentNameTh" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="DepartmentNameEn" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="BUDESC" Type="System.String" DbType="NVarChar(553)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ViewRole" Member="ViewRoles">
+    <Type Name="ViewRole">
+      <Column Name="RoleId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RoleNameTh" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="RoleNameEn" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="EmployeeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EmpNameEn" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="EmpNameTh" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="Seq" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
 </Database>

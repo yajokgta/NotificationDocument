@@ -6,13 +6,10 @@ using System.Net.Mail;
 using System.Net;
 using log4net.Config;
 using log4net;
-using System.Runtime.InteropServices.ComTypes;
-using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
 using Newtonsoft.Json;
-using System.Web.UI.WebControls;
 
 namespace NotificationDocument
 {

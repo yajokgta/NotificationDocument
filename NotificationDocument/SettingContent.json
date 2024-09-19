@@ -1,0 +1,14 @@
+[
+  {
+    "ReplaceKey": "[Effective_Date]",
+    "FormLabel": "วันที่ประกาศใช้"
+  },
+  {
+    "ReplaceKey": "[Document_Number]",
+    "FormLabel": "รหัสเอกสาร"
+  },
+  {
+    "ReplaceKey": "[Document_Type]",
+    "FormLabel": "ประเภทเอกสาร"
+  }
+]

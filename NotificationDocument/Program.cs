@@ -10,6 +10,9 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using System.IO;
+using Newtonsoft.Json;
+using System.Web.UI.WebControls;
 
 namespace NotificationDocument
 {
@@ -50,6 +53,33 @@ namespace NotificationDocument
                 return bool.Parse(_config);
             }
         }
+        public class SettingContentModel
+        {
+            public string ReplaceKey { get; set;}
+            public string FormLabel { get; set;}
+            public string Value { get; set; } = "";
+        }
+
+        public static List<SettingContentModel> ReadContents
+        {
+            get
+            {
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "SettingContent.json");
+
+                if (File.Exists(filePath))
+                {
+                    string jsonString = File.ReadAllText(filePath);
+                    return JsonConvert.DeserializeObject<List<SettingContentModel>>(jsonString);
+                }
+                else
+                {
+                    Console.WriteLine("File not found: " + filePath);
+                    return new List<SettingContentModel>();
+                }
+            }
+        }
+
+        public static List<SettingContentModel> SettingContents = ReadContents;
 
         public static DbContextDataContext dbContext = new DbContextDataContext(connectionString);
         public static DateTime currentDate = DateTime.Now;
@@ -110,13 +140,18 @@ namespace NotificationDocument
             {
                 memoId = memo.MemoId;
 
+                SettingContents.ForEach(x =>
+                {
+                    x.Value = getValueAdvanceForm(memo.MAdvancveForm, x.FormLabel);
+                });
+
                 var sURLToRequest = $"{ConfigurationSettings.AppSettings["TinyUrl"]}Request?MemoID={memo.MemoId}";
 
                 var effectiveDate = getValueAdvanceForm(memo.MAdvancveForm, effectiveLabel);
 
-                var EmailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest, effectiveDate);
-                var EmailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest, effectiveDate);
-                SendEmail(EmailBody, EmailSubject, emails);
+                var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest);
+                var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest);
+                SendEmail(emailBody, emailSubject, emails);
             }
 
             log.Info($"=============================================================================================================");
@@ -157,23 +192,22 @@ namespace NotificationDocument
             return setValue;
         }
 
-        public static string ReplaceEmail(string content, TRNMemo memo, string sURLToRequest,string effectiveDate)
+        public static string ReplaceEmail(string content, TRNMemo memo, string sURLToRequest)
         {
             content = content
-
                .Replace("[TRNMemo_DocumentNo]", memo.DocumentNo)
                .Replace("[TRNMemo_TemplateSubject]", memo.TemplateSubject)
                .Replace("[TRNMemo_RNameEn]", memo.RNameEn)
-               //.Replace("[TRNMemo_RequestDate]", memo.RequestDate.Value.ToString("dd MMM yyyy"))
-               //.Replace("[TRNActionHistory_ActorName]", dbContext.ViewEmployees.FirstOrDefault(x => x.EmployeeId.ToString() == memo.LastActionBy)?.NameEn)
-
-               .Replace("[Effective_Date]", effectiveDate)
                .Replace("[TRNMemo_StatusName]", memo.StatusName)
-
                .Replace("[TRNMemo_CompanyName]", memo.CompanyName)
                .Replace("[TRNMemo_TemplateName]", memo.TemplateName)
-
                .Replace("[URLToRequest]", String.Format("<a href='{0}'>Click</a>", sURLToRequest));
+
+            //DynamicContent
+            foreach(var setting in SettingContents)
+            {
+                content.Replace(setting.ReplaceKey, setting.Value);
+            }
 
             return content;
         }

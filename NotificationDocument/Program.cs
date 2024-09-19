@@ -142,84 +142,82 @@ namespace NotificationDocument
                 var department = getValueAdvanceForm(memo.MAdvancveForm, "Department");
                 var documentNumber = getValueAdvanceForm(memo.MAdvancveForm, DocumentNumber);
                 var promulgation = getValueAdvanceForm(memo.MAdvancveForm, "การประกาศใช้");
+                var listBU = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && x.col_label == "หน่วยงาน").Select(s => s.col_value).ToList();
+                var employeeNames = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "กรณีเฉพาะบุคคลที่เกี่ยวข้อง" && x.col_label == "ชื่อผู้เกี่ยวข้อง").Select(s => s.col_value).ToList();
 
                 log.Info("Documentnumber : " + documentNumber);
                 log.Info("MemoId : " + memo.MemoId);
                 log.Info("promulgation : " + promulgation);
 
-                var effectiveDate = getValueAdvanceForm(memo.MAdvancveForm, effectiveLabel);
-
-                var listBU = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && x.col_label == "หน่วยงาน").Select(s => s.col_value).ToList();
-                var listEmployee = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "กรณีเฉพาะบุคคลที่เกี่ยวข้อง" && x.col_label == "ชื่อผู้เกี่ยวข้อง").Select(s => s.col_value).ToList();
-
                 string AdditionalEmp = "";
                 var ccPersonDistinct = new List<string>();
                 var ccPersonData = "";
+
+                void AddRequesterAndCreator()
+                {
+                    additionalEmployees.Add(viewEmployeeQuery.FirstOrDefault(e => e.EmployeeId == memo.RequesterId));
+                    additionalEmployees.Add(viewEmployeeQuery.FirstOrDefault(e => e.EmployeeId == memo.CreatorId));
+                }
+
+                void ProcessAndAddCcPersons()
+                {
+                    var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
+                    employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
+                }
+
+                void FinalizeEmployeeData()
+                {
+                    AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
+                    ccPersonDistinct = employees
+                        .Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh))
+                        .Select(employee => employee.NameTh).ToList();
+                    ccPersonData = string.Join(",", ccPersonDistinct);
+                }
+
+                void AddLineApproveEmployees()
+                {
+                    foreach (var lineapprove in memoLineApproves)
+                    {
+                        var emp = viewEmployeeQuery.FirstOrDefault(v => v.EmployeeId == lineapprove.EmployeeId);
+                        if (emp != null)
+                        {
+                            employees.Add(emp);
+                        }
+                    }
+                }
 
                 if (promulgation == "ทุกคนทั้งองค์กร")
                 {
                     employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup)
                                 .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
-                    additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
-                    additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
-
-                    var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                    ccPersonNames.ForEach(x => x.Trim());
-
-                    employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
-
-                    AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
-                    ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
-                    ccPersonData = string.Join(",", ccPersonDistinct);
+                    AddRequesterAndCreator();
+                    ProcessAndAddCcPersons();
+                    FinalizeEmployeeData();
                 }
                 else if (promulgation == "เฉพาะหน่วยงาน")
                 {
                     if (!string.IsNullOrEmpty(buGroup))
                     {
-                        foreach (var lineapprove in memoLineApproves)
-                        {
-                            var emp = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).FirstOrDefault();
-                            employees.Add(emp);
-                        }
+                        AddLineApproveEmployees();
 
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                                     .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
-
-                        var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        ccPersonNames.ForEach(x => x.Trim());
-
-                        employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
-
-                        AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
-                        ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
-                        ccPersonData = string.Join(",", ccPersonDistinct);
+                        AddRequesterAndCreator();
+                        ProcessAndAddCcPersons();
+                        FinalizeEmployeeData();
                     }
                     else
                     {
-                        foreach (var lineapprove in memoLineApproves)
-                        {
-                            var emp = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).FirstOrDefault();
-                            employees.Add(emp);
-                        }
+                        AddLineApproveEmployees();
 
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                             .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
-
-                        var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        ccPersonNames.ForEach(x => x.Trim());
-
-                        employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
-
-                        AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
-                        ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
-                        ccPersonData = string.Join(",", ccPersonDistinct);
+                        AddRequesterAndCreator();
+                        ProcessAndAddCcPersons();
+                        FinalizeEmployeeData();
                     }
 
                 }
@@ -227,52 +225,27 @@ namespace NotificationDocument
                 {
                     if (!string.IsNullOrEmpty(buGroup))
                     {
-                        foreach (var lineapprove in memoLineApproves)
-                        {
-                            var emps = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).ToList();
-                            employees.AddRange(emps);
-                        }
+                        AddLineApproveEmployees();
 
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                             .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
-                        employees.AddRange(viewEmployeeQuery.Where(x => listEmployee.Contains(x.NameEn) || listEmployee.Contains(x.NameTh)).ToList());
+                        employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
 
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
-
-                        var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        ccPersonNames.ForEach(x => x.Trim());
-
-                        employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
-
-                        AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
-                        ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
-                        ccPersonData = string.Join(",", ccPersonDistinct);
+                        AddRequesterAndCreator();
+                        ProcessAndAddCcPersons();
+                        FinalizeEmployeeData();
                     }
                     else
                     {
-                        foreach (var lineapprove in memoLineApproves)
-                        {
-                            var emps = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).ToList();
-                            employees.AddRange(emps);
-                        }
+                        AddLineApproveEmployees();
 
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                             .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+                        employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
 
-                        employees.AddRange(viewEmployeeQuery.Where(x => listEmployee.Contains(x.NameEn) || listEmployee.Contains(x.NameTh)).ToList());
-
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
-
-                        var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        ccPersonNames.ForEach(x => x.Trim());
-
-                        employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
-
-                        AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
-                        ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
-                        ccPersonData = string.Join(",", ccPersonDistinct);
+                        AddRequesterAndCreator();
+                        ProcessAndAddCcPersons();
+                        FinalizeEmployeeData();
 
                     }
                     
@@ -281,11 +254,7 @@ namespace NotificationDocument
                 {
                     if (!string.IsNullOrEmpty(buGroup))
                     {
-                        foreach (var lineapprove in memoLineApproves)
-                        {
-                            var emps = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).ToList();
-                            employees.AddRange(emps);
-                        }
+                        AddLineApproveEmployees();
 
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                             .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
@@ -293,44 +262,24 @@ namespace NotificationDocument
                         employees.AddRange(dbContext.MSTDepartments.Where(x => listBU.Contains(x.NameEn) || listBU.Contains(x.NameTh))
                                     .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
-                        employees.AddRange(viewEmployeeQuery.Where(x => listEmployee.Contains(x.NameEn) || listEmployee.Contains(x.NameTh)).ToList());
+                        employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
 
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
-
-                        var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        ccPersonNames.ForEach(x => x.Trim());
-
-                        employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
-
-                        AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
-                        ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
-                        ccPersonData = string.Join(",", ccPersonDistinct);
+                        AddRequesterAndCreator();
+                        ProcessAndAddCcPersons();
+                        FinalizeEmployeeData();
                     }
                     else
                     {
-                        foreach (var lineapprove in memoLineApproves)
-                        {
-                            var emps = viewEmployeeQuery.Where(v => v.EmployeeId == lineapprove.EmployeeId).ToList();
-                            employees.AddRange(emps);
-                        }
+                        AddLineApproveEmployees();
 
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
-                        employees.AddRange(viewEmployeeQuery.Where(x => listEmployee.Contains(x.NameEn) || listEmployee.Contains(x.NameTh)).ToList());
+                        employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
 
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.RequesterId).FirstOrDefault());
-                        additionalEmployees.Add(viewEmployeeQuery.Where(e => e.EmployeeId == memo.CreatorId).FirstOrDefault());
-
-                        var ccPersonNames = memo.CcPerson.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        ccPersonNames.ForEach(x => x.Trim());
-
-                        employees.AddRange(viewEmployeeQuery.Where(x => ccPersonNames.Contains(x.NameEn) || ccPersonNames.Contains(x.NameTh)).ToList());
-
-                        AdditionalEmp = string.Join(",", additionalEmployees.Select(nameth => nameth.NameTh));
-                        ccPersonDistinct = employees.Where(employee => !additionalEmployees.Select(ae => ae.NameTh).Contains(employee.NameTh)).Select(employee => employee.NameTh).ToList();
-                        ccPersonData = string.Join(",", ccPersonDistinct);
+                        AddRequesterAndCreator();
+                        ProcessAndAddCcPersons();
+                        FinalizeEmployeeData();
                     }
                 }
                 else

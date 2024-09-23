@@ -436,5 +436,11 @@
         <elementListCompartment Id="e386f21f-36c1-4275-91c8-8a4b67b6cc24" absoluteBounds="0.765, 23.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
+    <classShape Id="08d70988-2ccf-49fe-9d1b-312f7e920032" absoluteBounds="12.375, 24.75, 2, 3.1170068359375023">
+      <DataClassMoniker Name="/DbContextDataContext/LogSentEmail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f6bc7c5a-7791-44f3-aeda-1365774cf29e" absoluteBounds="12.39, 25.21, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

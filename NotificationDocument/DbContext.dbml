@@ -1144,4 +1144,20 @@
       <Column Name="Seq" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.LogSentEmail" Member="LogSentEmails">
+    <Type Name="LogSentEmail">
+      <Column Name="MemoId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="StatusName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="MAdvancveForm" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DocumentNo" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MemoSubject" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="DocumentCode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="RNameTh" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="ToPerson" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CcPerson" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="LastActionBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="RequestDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
 </Database>

@@ -186,6 +186,9 @@ namespace NotificationDocument
     partial void InsertSet(Set instance);
     partial void UpdateSet(Set instance);
     partial void DeleteSet(Set instance);
+    partial void InsertLogSentEmail(LogSentEmail instance);
+    partial void UpdateLogSentEmail(LogSentEmail instance);
+    partial void DeleteLogSentEmail(LogSentEmail instance);
     #endregion
 		
 		public DbContextDataContext() : 
@@ -775,6 +778,14 @@ namespace NotificationDocument
 			get
 			{
 				return this.GetTable<ViewRole>();
+			}
+		}
+		
+		public System.Data.Linq.Table<LogSentEmail> LogSentEmails
+		{
+			get
+			{
+				return this.GetTable<LogSentEmail>();
 			}
 		}
 	}
@@ -22419,6 +22430,332 @@ namespace NotificationDocument
 				{
 					this._Seq = value;
 				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.LogSentEmail")]
+	public partial class LogSentEmail : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _MemoId;
+		
+		private System.Nullable<System.DateTime> _ModifiedDate;
+		
+		private string _StatusName;
+		
+		private string _MAdvancveForm;
+		
+		private string _DocumentNo;
+		
+		private string _MemoSubject;
+		
+		private string _DocumentCode;
+		
+		private string _RNameTh;
+		
+		private string _ToPerson;
+		
+		private string _CcPerson;
+		
+		private string _LastActionBy;
+		
+		private System.Nullable<System.DateTime> _RequestDate;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnMemoIdChanging(int value);
+    partial void OnMemoIdChanged();
+    partial void OnModifiedDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnModifiedDateChanged();
+    partial void OnStatusNameChanging(string value);
+    partial void OnStatusNameChanged();
+    partial void OnMAdvancveFormChanging(string value);
+    partial void OnMAdvancveFormChanged();
+    partial void OnDocumentNoChanging(string value);
+    partial void OnDocumentNoChanged();
+    partial void OnMemoSubjectChanging(string value);
+    partial void OnMemoSubjectChanged();
+    partial void OnDocumentCodeChanging(string value);
+    partial void OnDocumentCodeChanged();
+    partial void OnRNameThChanging(string value);
+    partial void OnRNameThChanged();
+    partial void OnToPersonChanging(string value);
+    partial void OnToPersonChanged();
+    partial void OnCcPersonChanging(string value);
+    partial void OnCcPersonChanged();
+    partial void OnLastActionByChanging(string value);
+    partial void OnLastActionByChanged();
+    partial void OnRequestDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnRequestDateChanged();
+    #endregion
+		
+		public LogSentEmail()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemoId", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int MemoId
+		{
+			get
+			{
+				return this._MemoId;
+			}
+			set
+			{
+				if ((this._MemoId != value))
+				{
+					this.OnMemoIdChanging(value);
+					this.SendPropertyChanging();
+					this._MemoId = value;
+					this.SendPropertyChanged("MemoId");
+					this.OnMemoIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModifiedDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> ModifiedDate
+		{
+			get
+			{
+				return this._ModifiedDate;
+			}
+			set
+			{
+				if ((this._ModifiedDate != value))
+				{
+					this.OnModifiedDateChanging(value);
+					this.SendPropertyChanging();
+					this._ModifiedDate = value;
+					this.SendPropertyChanged("ModifiedDate");
+					this.OnModifiedDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StatusName", DbType="NVarChar(500)")]
+		public string StatusName
+		{
+			get
+			{
+				return this._StatusName;
+			}
+			set
+			{
+				if ((this._StatusName != value))
+				{
+					this.OnStatusNameChanging(value);
+					this.SendPropertyChanging();
+					this._StatusName = value;
+					this.SendPropertyChanged("StatusName");
+					this.OnStatusNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MAdvancveForm", DbType="NVarChar(MAX)")]
+		public string MAdvancveForm
+		{
+			get
+			{
+				return this._MAdvancveForm;
+			}
+			set
+			{
+				if ((this._MAdvancveForm != value))
+				{
+					this.OnMAdvancveFormChanging(value);
+					this.SendPropertyChanging();
+					this._MAdvancveForm = value;
+					this.SendPropertyChanged("MAdvancveForm");
+					this.OnMAdvancveFormChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DocumentNo", DbType="NVarChar(50)")]
+		public string DocumentNo
+		{
+			get
+			{
+				return this._DocumentNo;
+			}
+			set
+			{
+				if ((this._DocumentNo != value))
+				{
+					this.OnDocumentNoChanging(value);
+					this.SendPropertyChanging();
+					this._DocumentNo = value;
+					this.SendPropertyChanged("DocumentNo");
+					this.OnDocumentNoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemoSubject", DbType="NVarChar(500)")]
+		public string MemoSubject
+		{
+			get
+			{
+				return this._MemoSubject;
+			}
+			set
+			{
+				if ((this._MemoSubject != value))
+				{
+					this.OnMemoSubjectChanging(value);
+					this.SendPropertyChanging();
+					this._MemoSubject = value;
+					this.SendPropertyChanged("MemoSubject");
+					this.OnMemoSubjectChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DocumentCode", DbType="NVarChar(50)")]
+		public string DocumentCode
+		{
+			get
+			{
+				return this._DocumentCode;
+			}
+			set
+			{
+				if ((this._DocumentCode != value))
+				{
+					this.OnDocumentCodeChanging(value);
+					this.SendPropertyChanging();
+					this._DocumentCode = value;
+					this.SendPropertyChanged("DocumentCode");
+					this.OnDocumentCodeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RNameTh", DbType="NVarChar(500)")]
+		public string RNameTh
+		{
+			get
+			{
+				return this._RNameTh;
+			}
+			set
+			{
+				if ((this._RNameTh != value))
+				{
+					this.OnRNameThChanging(value);
+					this.SendPropertyChanging();
+					this._RNameTh = value;
+					this.SendPropertyChanged("RNameTh");
+					this.OnRNameThChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ToPerson", DbType="NVarChar(MAX)")]
+		public string ToPerson
+		{
+			get
+			{
+				return this._ToPerson;
+			}
+			set
+			{
+				if ((this._ToPerson != value))
+				{
+					this.OnToPersonChanging(value);
+					this.SendPropertyChanging();
+					this._ToPerson = value;
+					this.SendPropertyChanged("ToPerson");
+					this.OnToPersonChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CcPerson", DbType="NVarChar(MAX)")]
+		public string CcPerson
+		{
+			get
+			{
+				return this._CcPerson;
+			}
+			set
+			{
+				if ((this._CcPerson != value))
+				{
+					this.OnCcPersonChanging(value);
+					this.SendPropertyChanging();
+					this._CcPerson = value;
+					this.SendPropertyChanged("CcPerson");
+					this.OnCcPersonChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastActionBy", DbType="NVarChar(500)")]
+		public string LastActionBy
+		{
+			get
+			{
+				return this._LastActionBy;
+			}
+			set
+			{
+				if ((this._LastActionBy != value))
+				{
+					this.OnLastActionByChanging(value);
+					this.SendPropertyChanging();
+					this._LastActionBy = value;
+					this.SendPropertyChanged("LastActionBy");
+					this.OnLastActionByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequestDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> RequestDate
+		{
+			get
+			{
+				return this._RequestDate;
+			}
+			set
+			{
+				if ((this._RequestDate != value))
+				{
+					this.OnRequestDateChanging(value);
+					this.SendPropertyChanging();
+					this._RequestDate = value;
+					this.SendPropertyChanged("RequestDate");
+					this.OnRequestDateChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}

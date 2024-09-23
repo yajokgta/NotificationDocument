@@ -72,6 +72,7 @@ namespace NotificationDocument
         public static DateTime currentDate = DateTime.Now;
         static void Main(string[] args)
         {
+            var memoa = dbContext.TRNMemos.Where(x => dbContext.TRNUsageLogs.Any(a => a.Note01 == "5" && a.Note02 == "JOB_NOTI")).ToList();
             XmlConfigurator.Configure();
             log.Info($"=============================================================================================================");
             var currents = new List<string>()
@@ -86,7 +87,6 @@ namespace NotificationDocument
                 currentDate.AddDays(-1).ToString("dd/MM/yyyy", new CultureInfo("en-GB"))
             };
             
-
             var memos = new List<TRNMemo>();
 
             if (ManualMode)
@@ -122,7 +122,8 @@ namespace NotificationDocument
             else
             {
                 memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
-                dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
+                dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value)) &&
+                dbContext.LogSentEmails.Any(a => x.MemoId != a.MemoId)).ToList();
                 log.Info($"Date Format: {string.Join(",", currents)}");
             }
 
@@ -288,11 +289,28 @@ namespace NotificationDocument
                 }
                 
                 SendEmail(employees, memo, documentNumber, ccPersonData, AdditionalEmp);
+                AddLogSendMemo(memo);
                 log.Info("All Email :" + employees.Count);
                 log.Info("--------------------------");
 
             }
             log.Info($"=============================================================================================================");
+        }
+
+        public static void AddLogSendMemo(TRNMemo memo)
+        {
+            LogSentEmail savetblog = new LogSentEmail();
+            savetblog.MemoId = memo.MemoId;
+            savetblog.ModifiedDate = memo.ModifiedDate;
+            savetblog.StatusName = memo.StatusName;
+            savetblog.DocumentNo = memo.DocumentNo;
+            savetblog.DocumentCode = memo.DocumentCode;
+            savetblog.MemoSubject = memo.MemoSubject;
+            savetblog.RNameTh = memo.RNameTh;
+            savetblog.RequestDate = memo.RequestDate;
+            savetblog.LastActionBy = memo.LastActionBy;
+            dbContext.LogSentEmails.InsertOnSubmit(savetblog);
+            dbContext.SubmitChanges();
         }
 
         public static void SendEmail(List<ViewEmployee> employees, TRNMemo memo, String Documentnumber, string ccPersonData, string additionalEmployees)

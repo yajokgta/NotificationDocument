@@ -191,10 +191,6 @@ namespace NotificationDocument
                 {
                     employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup)
                                 .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
-
-                    AddRequesterAndCreator();
-                    ProcessAndAddCcPersons();
-                    FinalizeEmployeeData();
                 }
                 else if (promulgation == "เฉพาะหน่วยงาน")
                 {
@@ -204,10 +200,6 @@ namespace NotificationDocument
 
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                                     .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
-
-                        AddRequesterAndCreator();
-                        ProcessAndAddCcPersons();
-                        FinalizeEmployeeData();
                     }
                     else
                     {
@@ -215,12 +207,7 @@ namespace NotificationDocument
 
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                             .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
-
-                        AddRequesterAndCreator();
-                        ProcessAndAddCcPersons();
-                        FinalizeEmployeeData();
                     }
-
                 }
                 else if (promulgation == "เฉพาะบุคคล")
                 {
@@ -231,10 +218,6 @@ namespace NotificationDocument
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                             .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
                         employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
-
-                        AddRequesterAndCreator();
-                        ProcessAndAddCcPersons();
-                        FinalizeEmployeeData();
                     }
                     else
                     {
@@ -243,11 +226,6 @@ namespace NotificationDocument
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                             .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
                         employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
-
-                        AddRequesterAndCreator();
-                        ProcessAndAddCcPersons();
-                        FinalizeEmployeeData();
-
                     }
                     
                 }
@@ -264,10 +242,6 @@ namespace NotificationDocument
                                     .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
                         employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
-
-                        AddRequesterAndCreator();
-                        ProcessAndAddCcPersons();
-                        FinalizeEmployeeData();
                     }
                     else
                     {
@@ -277,23 +251,23 @@ namespace NotificationDocument
                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
                         employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
-
-                        AddRequesterAndCreator();
-                        ProcessAndAddCcPersons();
-                        FinalizeEmployeeData();
                     }
                 }
                 else
                 {
                     log.Info("Invalid promulgation");
                 }
-                
+
+                AddRequesterAndCreator();
+                ProcessAndAddCcPersons();
+                FinalizeEmployeeData();
+
                 SendEmail(employees, memo, documentNumber, ccPersonData, AdditionalEmp);
                 AddLogSendMemo(memo);
                 log.Info("All Email :" + employees.Count);
                 log.Info("--------------------------");
-
             }
+
             log.Info($"=============================================================================================================");
         }
 

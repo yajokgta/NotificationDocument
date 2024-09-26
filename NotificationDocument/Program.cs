@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Data.Linq;
 using System.Globalization;
+using System.Web.Configuration;
 
 namespace NotificationDocument
 {
@@ -143,7 +144,7 @@ namespace NotificationDocument
                 var department = getValueAdvanceForm(memo.MAdvancveForm, "Department");
                 var documentNumber = getValueAdvanceForm(memo.MAdvancveForm, DocumentNumber);
                 var promulgation = getValueAdvanceForm(memo.MAdvancveForm, "การประกาศใช้");
-                var listBU = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && x.col_label == "หน่วยงาน").Select(s => s.col_value).ToList();
+                var departmentInTable = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && x.col_label == "หน่วยงาน").Select(s => s.col_value).ToList();
                 var employeeNames = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && x.obj_label == "กรณีเฉพาะบุคคลที่เกี่ยวข้อง" && x.col_label == "ชื่อผู้เกี่ยวข้อง").Select(s => s.col_value).ToList();
 
                 log.Info("Documentnumber : " + documentNumber);
@@ -238,7 +239,7 @@ namespace NotificationDocument
                         employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
                             .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
-                        employees.AddRange(dbContext.MSTDepartments.Where(x => listBU.Contains(x.NameEn) || listBU.Contains(x.NameTh))
+                        employees.AddRange(dbContext.MSTDepartments.Where(x => departmentInTable.Contains(x.NameEn) || departmentInTable.Contains(x.NameTh))
                                     .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
                         employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
@@ -472,6 +473,55 @@ namespace NotificationDocument
             }
 
             return setValue;
+        }
+
+        public static List<MSTDepartment> GetDepartmentBelows(int departmentId)
+        {
+            var result = new List<MSTDepartment>();
+
+            // หาข้อมูลของแผนกปัจจุบัน
+            var department = dbContext.MSTDepartments.FirstOrDefault(d => d.DepartmentId == departmentId);
+
+            if (department != null)
+            {
+                // เพิ่มแผนกปัจจุบันใน result
+                result.Add(department);
+
+                // ค้นหาแผนกลูก ๆ ที่มี ParentId เป็น departmentId ของปัจจุบัน
+                var children = dbContext.MSTDepartments.Where(d => d.ParentId == departmentId).ToList();
+
+                // สำหรับแผนกลูกแต่ละอัน ให้ดึงลูก ๆ ลงไปด้วย
+                foreach (var child in children)
+                {
+                    var childDepartments = GetDepartmentBelows(child.DepartmentId);
+                    result.AddRange(childDepartments);
+                }
+            }
+
+            return result;
+        }
+
+        public static List<MSTDepartment> GetDepartmentAboves(int departmentId)
+        {
+            var result = new List<MSTDepartment>();
+
+            // หาข้อมูลของ Department ตาม ID
+            var department = dbContext.MSTDepartments.FirstOrDefault(d => d.DepartmentId == departmentId);
+
+            if (department != null)
+            {
+                // เพิ่ม Department ปัจจุบันใน result
+                result.Add(department);
+
+                // ถ้ามี ParentId ให้เรียกฟังก์ชันตัวเองเพื่อดึง Parent ขึ้นไปเรื่อยๆ
+                if (department.ParentId.HasValue)
+                {
+                    var parentDepartments = GetDepartmentAboves(department.ParentId.Value);
+                    result.AddRange(parentDepartments);
+                }
+            }
+
+            return result;
         }
     }
 }

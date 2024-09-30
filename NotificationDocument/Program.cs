@@ -73,7 +73,7 @@ namespace NotificationDocument
         public static DateTime currentDate = DateTime.Now;
         static void Main(string[] args)
         {
-            var memoa = dbContext.TRNMemos.Where(x => dbContext.TRNUsageLogs.Any(a => a.Note01 == "5" && a.Note02 == "JOB_NOTI")).ToList();
+            //var memoa = dbContext.TRNMemos.Where(x => dbContext.TRNUsageLogs.Any(a => a.Note01 == "5" && a.Note02 == "JOB_NOTI")).ToList();
             XmlConfigurator.Configure();
             log.Info($"=============================================================================================================");
             var currents = new List<string>()
@@ -190,8 +190,11 @@ namespace NotificationDocument
 
                 if (promulgation == "ทุกคนทั้งองค์กร")
                 {
-                    employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup)
-                                .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+                    var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => buGroup.Contains(x.NameEn) || buGroup.Contains(x.NameTh))?.DepartmentId ?? 0;
+                    var deptBelows = GetDepartmentBelows(buGroupId);
+
+                    employees.AddRange(deptBelows
+                                .Join(viewEmployeeQuery.ToList(), bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
                 }
                 else if (promulgation == "เฉพาะหน่วยงาน")
                 {
@@ -199,14 +202,17 @@ namespace NotificationDocument
                     {
                         AddLineApproveEmployees();
 
-                        employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
-                                    .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+                        var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => buGroup.Contains(x.NameEn) || buGroup.Contains(x.NameTh))?.DepartmentId ?? 0;
+                        var deptBelows = GetDepartmentBelows(buGroupId);
+
+                        employees.AddRange(deptBelows.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))
+                                    .Join(viewEmployeeQuery.ToList(), bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
                     }
                     else
                     {
                         AddLineApproveEmployees();
 
-                        employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
+                        employees.AddRange(dbContext.MSTDepartments.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))
                             .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
                     }
                 }
@@ -216,16 +222,21 @@ namespace NotificationDocument
                     {
                         AddLineApproveEmployees();
 
-                        employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
-                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+                        var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => buGroup.Contains(x.NameEn) || buGroup.Contains(x.NameTh))?.DepartmentId ?? 0;
+                        var deptBelows = GetDepartmentBelows(buGroupId);
+
+                        employees.AddRange(deptBelows.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))
+                                   .Join(viewEmployeeQuery.ToList(), bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+
                         employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
                     }
                     else
                     {
                         AddLineApproveEmployees();
 
-                        employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
+                        employees.AddRange(dbContext.MSTDepartments.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))
                             .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+
                         employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
                     }
                     
@@ -236,8 +247,11 @@ namespace NotificationDocument
                     {
                         AddLineApproveEmployees();
 
-                        employees.AddRange(dbContext.ViewBUs.Where(x => x.BUDESC == buGroup && x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
-                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
+                        var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => buGroup.Contains(x.NameEn) || buGroup.Contains(x.NameTh))?.DepartmentId ?? 0;
+                        var deptBelows = GetDepartmentBelows(buGroupId);
+
+                        employees.AddRange(deptBelows.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))
+                                   .Join(viewEmployeeQuery.ToList(), bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
                         employees.AddRange(dbContext.MSTDepartments.Where(x => departmentInTable.Contains(x.NameEn) || departmentInTable.Contains(x.NameTh))
                                     .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
@@ -248,7 +262,7 @@ namespace NotificationDocument
                     {
                         AddLineApproveEmployees();
 
-                        employees.AddRange(dbContext.ViewBUs.Where(x => x.DepartmentNameEn.Contains(department) || x.DepartmentNameTh.Contains(department))
+                        employees.AddRange(dbContext.MSTDepartments.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))
                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
 
                         employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());

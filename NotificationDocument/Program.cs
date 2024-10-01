@@ -6,13 +6,8 @@ using System.Net.Mail;
 using System.Net;
 using log4net.Config;
 using log4net;
-using System.Runtime.InteropServices.ComTypes;
-using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
-using System.Data.Linq;
 using System.Globalization;
-using System.Web.Configuration;
 
 namespace NotificationDocument
 {
@@ -56,6 +51,7 @@ namespace NotificationDocument
                 return bool.Parse(_config);
             }
         }
+
         private static string DocumentNumber
         {
             get
@@ -71,7 +67,8 @@ namespace NotificationDocument
 
         public static DbContextDataContext dbContext = new DbContextDataContext(connectionString);
         public static DateTime currentDate = DateTime.Now;
-        static void Main(string[] args)
+
+        private static void Main(string[] args)
         {
             //var memoa = dbContext.TRNMemos.Where(x => dbContext.TRNUsageLogs.Any(a => a.Note01 == "5" && a.Note02 == "JOB_NOTI")).ToList();
             XmlConfigurator.Configure();
@@ -87,7 +84,7 @@ namespace NotificationDocument
                 currentDate.AddDays(-1).ToString("dd MM yyyy", new CultureInfo("en-GB")),
                 currentDate.AddDays(-1).ToString("dd/MM/yyyy", new CultureInfo("en-GB"))
             };
-            
+
             var memos = new List<TRNMemo>();
 
             if (ManualMode)
@@ -119,7 +116,6 @@ namespace NotificationDocument
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && manuals.Contains(a.obj_value))).ToList();
                 log.Info($"Date Format: {string.Join(",", manuals)}");
             }
-
             else
             {
                 memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
@@ -132,7 +128,7 @@ namespace NotificationDocument
 
             var viewEmployeeQuery = dbContext.ViewEmployees.Where(x => x.IsActive == true);
 
-            foreach ( var memo in memos )
+            foreach (var memo in memos)
             {
                 var employees = new List<ViewEmployee>();
                 var additionalEmployees = new List<ViewEmployee>();
@@ -239,7 +235,6 @@ namespace NotificationDocument
 
                         employees.AddRange(viewEmployeeQuery.Where(x => employeeNames.Contains(x.NameEn) || employeeNames.Contains(x.NameTh)).ToList());
                     }
-                    
                 }
                 else if (promulgation == "--select--")
                 {

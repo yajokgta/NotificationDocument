@@ -499,12 +499,15 @@ namespace NotificationDocument
                 // เพิ่มแผนกปัจจุบันใน result
                 result.Add(department);
 
-                // ค้นหาแผนกลูก ๆ ที่มี ParentId เป็น departmentId ของปัจจุบัน
-                var children = dbContext.MSTDepartments.Where(d => d.ParentId == departmentId).ToList();
+                // ค้นหาแผนกลูก ๆ ที่มี ParentId เป็น departmentId ของปัจจุบัน และไม่ให้ ParentId เท่ากับ DepartmentId
+                var children = dbContext.MSTDepartments
+                    .Where(d => d.ParentId == departmentId && d.DepartmentId != departmentId)
+                    .ToList();
 
                 // สำหรับแผนกลูกแต่ละอัน ให้ดึงลูก ๆ ลงไปด้วย
                 foreach (var child in children)
                 {
+                    // เรียกใช้ตัวเองเพื่อดึงแผนกลูก ๆ ของ child และเช็คเงื่อนไขอีกครั้ง
                     var childDepartments = GetDepartmentBelows(child.DepartmentId);
                     result.AddRange(childDepartments);
                 }
@@ -525,8 +528,8 @@ namespace NotificationDocument
                 // เพิ่ม Department ปัจจุบันใน result
                 result.Add(department);
 
-                // ถ้ามี ParentId ให้เรียกฟังก์ชันตัวเองเพื่อดึง Parent ขึ้นไปเรื่อยๆ
-                if (department.ParentId.HasValue)
+                // ถ้ามี ParentId และ ParentId ไม่เท่ากับ DepartmentId ให้เรียกฟังก์ชันตัวเองเพื่อดึง Parent ขึ้นไปเรื่อยๆ
+                if (department.ParentId.HasValue && department.ParentId.Value != department.DepartmentId)
                 {
                     var parentDepartments = GetDepartmentAboves(department.ParentId.Value);
                     result.AddRange(parentDepartments);

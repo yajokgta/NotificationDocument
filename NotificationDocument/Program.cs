@@ -186,7 +186,7 @@ namespace NotificationDocument
 
                 if (promulgation == "ทุกคนทั้งองค์กร")
                 {
-                    var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => buGroup.Contains(x.NameEn) || buGroup.Contains(x.NameTh))?.DepartmentId ?? 0;
+                    var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => x.NameEn.Contains(buGroup) || x.NameTh.Contains(buGroup))?.DepartmentId ?? 0;
                     var deptBelows = GetDepartmentBelows(buGroupId);
 
                     employees.AddRange(deptBelows
@@ -198,7 +198,7 @@ namespace NotificationDocument
                     {
                         AddLineApproveEmployees();
 
-                        var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => buGroup.Contains(x.NameEn) || buGroup.Contains(x.NameTh))?.DepartmentId ?? 0;
+                        var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => x.NameEn.Contains(buGroup) || x.NameTh.Contains(buGroup))?.DepartmentId ?? 0;
                         var deptBelows = GetDepartmentBelows(buGroupId);
 
                         employees.AddRange(deptBelows.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))
@@ -218,7 +218,7 @@ namespace NotificationDocument
                     {
                         AddLineApproveEmployees();
 
-                        var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => buGroup.Contains(x.NameEn) || buGroup.Contains(x.NameTh))?.DepartmentId ?? 0;
+                        var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => x.NameEn.Contains(buGroup) || x.NameTh.Contains(buGroup))?.DepartmentId ?? 0;
                         var deptBelows = GetDepartmentBelows(buGroupId);
 
                         employees.AddRange(deptBelows.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))
@@ -242,7 +242,7 @@ namespace NotificationDocument
                     {
                         AddLineApproveEmployees();
 
-                        var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => buGroup.Contains(x.NameEn) || buGroup.Contains(x.NameTh))?.DepartmentId ?? 0;
+                        var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => x.NameEn.Contains(buGroup) || x.NameTh.Contains(buGroup))?.DepartmentId ?? 0;
                         var deptBelows = GetDepartmentBelows(buGroupId);
 
                         employees.AddRange(deptBelows.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))

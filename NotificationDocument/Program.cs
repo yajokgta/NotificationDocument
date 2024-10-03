@@ -308,9 +308,12 @@ namespace NotificationDocument
             string formattedDate = sentDatetime.ToString("dddd, MMMM dd, yyyy h:mm:ss tt");
             string requestDateTimeString = memo.RequestDate.HasValue ? memo.RequestDate.Value.ToString("M/d/yyyy h:mm:ss tt") : "-";
             string toPersons = additionalEmployees;
-            string[] topersonNames = toPersons.Split(',');
-            string CcPerson = ccPersonData;
-            string[] ccpersonNames = CcPerson.Split(',');
+            var topersonNames = toPersons.Split(',').ToList();
+            var ccpersonNames = ccPersonData.Split(',').ToList();
+
+            topersonNames.RemoveAll(x => excludeRoles.Contains(x));
+            ccpersonNames.RemoveAll(x => excludeRoles.Contains(x));
+
             List<string> toEmailStrings = new List<string>();
             List<string> CcEmailStrings = new List<string>();
             int lastActionByEmployeeId = int.Parse(memo.LastActionBy);

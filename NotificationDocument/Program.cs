@@ -136,7 +136,7 @@ namespace NotificationDocument
 
                 var memoLineApproves = dbContext.TRNLineApproves.Where(y => y.MemoId == memo.MemoId).ToList();
 
-                var buGroup = getValueAdvanceForm(memo.MAdvancveForm, "Business Group");
+                var buGroup = getValueAdvanceForm(memo.MAdvancveForm, "Business Group").Split(' ').ToList().FirstOrDefault();
                 var department = getValueAdvanceForm(memo.MAdvancveForm, "Department");
                 var documentNumber = getValueAdvanceForm(memo.MAdvancveForm, DocumentNumber);
                 var promulgation = getValueAdvanceForm(memo.MAdvancveForm, "การประกาศใช้");

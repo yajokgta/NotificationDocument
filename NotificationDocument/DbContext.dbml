@@ -44,20 +44,6 @@
       <Column Name="Seq" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.MSTApprovalMatrix" Member="MSTApprovalMatrixes">
-    <Type Name="MSTApprovalMatrix">
-      <Column Name="ApproveMatrixId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="NameTh" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="NameEn" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="Conditions" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="CreatedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="ModifiedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="AccountId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.MSTApprovalMatrixItem" Member="MSTApprovalMatrixItems">
     <Type Name="MSTApprovalMatrixItem">
       <Column Name="ApproveMatrixItemId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -73,74 +59,6 @@
       <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="AccountId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTAuthorizedMenu" Member="MSTAuthorizedMenus">
-    <Type Name="MSTAuthorizedMenu">
-      <Column Name="AuMenuID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Process" Type="System.String" DbType="NVarChar(3)" CanBeNull="true" />
-      <Column Name="GroupMenu" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="SubMenu" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="ItemMenu" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="OrderGroup" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="OrderSub" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="OrderItem" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="InternalUrl" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Url" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="RolesID" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="CreatedBy" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="ModifiedBy" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTBU" Member="MSTBUs">
-    <Type Name="MSTBU">
-      <Column Name="BUID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="BUCode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="NameTh" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="CreatedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="ModifiedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="AccountId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTChecklist" Member="MSTChecklists">
-    <Type Name="MSTChecklist">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Org" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Type" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Standards" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Question" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="CreatedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="ModifiedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTCompany" Member="MSTCompanies">
-    <Type Name="MSTCompany">
-      <Column Name="CompanyId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="CompanyCode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="NameTh" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="NameEn" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="AddressTh" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="AddressEn" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Tel" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="Fax" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="UrlWeb" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="UrlLogo" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="CreatedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="ModifiedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="AccountId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="BUCode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.MSTDepartment" Member="MSTDepartments">
@@ -219,19 +137,6 @@
       <Column Name="Userid_Line" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.MSTInspectionLocation" Member="MSTInspectionLocations">
-    <Type Name="MSTInspectionLocation">
-      <Column Name="Area" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="InspectionLocation" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTIO" Member="MSTIOs">
-    <Type Name="MSTIO">
-      <Column Name="Year" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="CostCenter" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="IO" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.MSTMasterData" Member="MSTMasterDatas">
     <Type Name="MSTMasterData">
       <Column Name="MasterId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -247,30 +152,6 @@
       <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="ModifiedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
       <Column Name="Seq" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTMaterial" Member="MSTMaterials">
-    <Type Name="MSTMaterial">
-      <Column Name="ItemCode" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="Value1" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Value2" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Value3" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Value4" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Value5" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Value6" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Value7" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTPDFTemplate" Member="MSTPDFTemplates">
-    <Type Name="MSTPDFTemplate">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="TemplateId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="JsonProps" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="JsonLayout" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="HeaderLayout" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="BodyLayout" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="FooterLayout" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
   <Table Name="dbo.MSTPermission" Member="MSTPermissions">
@@ -319,50 +200,6 @@
       <Column Name="AccountId" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.MSTProject" Member="MSTProjects">
-    <Type Name="MSTProject">
-      <Column Name="ProjectId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="ProjectName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="ProjectCode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="CreatedBy" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
-      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="ModifiedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="AccountId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTProvince" Member="MSTProvinces">
-    <Type Name="MSTProvince">
-      <Column Name="ProvinceID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Provincethai" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="DistrictID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Districtthai" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="TambonID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Tambonthai" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Postcode" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTReleasedDocumentTemplate" Member="MSTReleasedDocumentTemplates">
-    <Type Name="MSTReleasedDocumentTemplate">
-      <Column Name="ReportTemplateId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="ReportName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="TemplateId" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="FieldCollection" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="ReportDescription" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="IsPrivate" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="CreatedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="ModifiedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="AccountId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="FavoritesItem" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="RoleID" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="TemplateVersion" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="RoleEmp" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.MSTReportTemplate" Member="MSTReportTemplates">
     <Type Name="MSTReportTemplate">
       <Column Name="ReportTemplateId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -406,37 +243,6 @@
       <Column Name="IsEdit" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="IsDelete" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="IsView" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTSEC" Member="MSTSECs">
-    <Type Name="MSTSEC">
-      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Position" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="Value" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTSubCon" Member="MSTSubCons">
-    <Type Name="MSTSubCon">
-      <Column Name="No" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
-      <Column Name="Initial" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="CompanyName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="InspectionType" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="InspectionLocationArea" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="AreaRemark" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MSTSystemNumber" Member="MSTSystemNumbers">
-    <Type Name="MSTSystemNumber">
-      <Column Name="UnitNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="UnitName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="SystemNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="SystemName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="DisciplineCode" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="DisciplineName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="SubSystemNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="SubSystemName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="SubSubSystemNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="SubSubSystemName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.MSTTemLineApprove" Member="MSTTemLineApproves">
@@ -535,27 +341,6 @@
       <Column Name="AccountId" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.MSTUserManual" Member="MSTUserManuals">
-    <Type Name="MSTUserManual">
-      <Column Name="UserManualId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="ActorId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="ActorName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="AttachedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="AttachFile" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="FileName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="FilePath" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="TagKeyword" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="UserManualGroupName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="OrderItem" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="CreatedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="ModifiedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="ModifiedBy" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="FileDescription" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="Sep" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.MSTUserPermission" Member="MSTUserPermissions">
     <Type Name="MSTUserPermission">
       <Column Name="EmployeeId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -619,7 +404,6 @@
       <Column Name="Reason" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Data" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Association Name="Job_State" Member="Job" ThisKey="JobId" OtherKey="Id" Type="Job" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.TRNAttachFile" Member="TRNAttachFiles">
@@ -742,17 +526,6 @@
       <Column Name="ResponseDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="LinkURL" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
       <Column Name="StatusCode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.TRNLog" Member="TRNLogs">
-    <Type Name="TRNLog">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Timestamp" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="Text" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="CreatedBy" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="RequestId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Module" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
-      <Column Name="[Level]" Member="Level" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.TRNMemo" Member="TRNMemos">
@@ -910,17 +683,6 @@
       <Column Name="ModifiedBy" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="dbo.TRNUploadFileBuilder" Member="TRNUploadFileBuilders">
-    <Type Name="TRNUploadFileBuilder">
-      <Column Name="FileID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="FileName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="FilePath" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="FileType" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="FileSize" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
-      <Column Name="ActorId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.TRNUsageLog" Member="TRNUsageLogs">
     <Type Name="TRNUsageLog">
       <Column Name="UsageLogId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -946,49 +708,6 @@
       <Column Name="Note05" Type="System.String" DbType="NText" CanBeNull="true" UpdateCheck="Never" />
     </Type>
   </Table>
-  <Table Name="dbo.TRNUserParticipate" Member="TRNUserParticipates">
-    <Type Name="TRNUserParticipate">
-      <Column Name="UPID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="DocumentNo" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="UserParticipateId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="UserParticipateName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="StatusName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="ActionName" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="IsProcess" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="Seq" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.TRNUserTransaction" Member="TRNUserTransactions">
-    <Type Name="TRNUserTransaction">
-      <Column Name="TransactionId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="EmployeeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Channel" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
-      <Column Name="DeviceToken" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="AccessDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.ZZ_CT_PPB_MasterItemCost" Member="ZZ_CT_PPB_MasterItemCosts">
-    <Type Name="ZZ_CT_PPB_MasterItemCost">
-      <Column Name="ITEM_CODE" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="ITEM_DESC_TH" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
-      <Column Name="PRODUCT_CATEGORY" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="FAMILY" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="UNIT_WEIGHT" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
-      <Column Name="WEIGHT_UOM_CODE" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="ITEM_STATUS" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="PRIMARY_UOM_CODE" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="UNIT_OF_MEASURE" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-      <Column Name="UNIT_COST" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="HangFire.AggregatedCounter" Member="AggregatedCounters">
-    <Type Name="AggregatedCounter">
-      <Column Name="[Key]" Member="Key" Type="System.String" DbType="NVarChar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Value" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
-      <Column Name="ExpireAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="HangFire.Counter" Member="Counters">
     <Type Name="Counter">
       <Column Name="[Key]" Member="Key" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
@@ -996,54 +715,11 @@
       <Column Name="ExpireAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
     </Type>
   </Table>
-  <Table Name="HangFire.Hash" Member="Hashes">
-    <Type Name="Hash">
-      <Column Name="[Key]" Member="Key" Type="System.String" DbType="NVarChar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Field" Type="System.String" DbType="NVarChar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Value" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="ExpireAt" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="HangFire.Job" Member="Jobs">
-    <Type Name="Job">
-      <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="StateId" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
-      <Column Name="StateName" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
-      <Column Name="InvocationData" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="Arguments" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="ExpireAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="Job_State" Member="States" ThisKey="Id" OtherKey="JobId" Type="State" />
-      <Association Name="Job_JobParameter" Member="JobParameters" ThisKey="Id" OtherKey="JobId" Type="JobParameter" />
-    </Type>
-  </Table>
   <Table Name="HangFire.JobParameter" Member="JobParameters">
     <Type Name="JobParameter">
       <Column Name="JobId" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(40) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Value" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Association Name="Job_JobParameter" Member="Job" ThisKey="JobId" OtherKey="Id" Type="Job" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
-    </Type>
-  </Table>
-  <Table Name="HangFire.JobQueue" Member="JobQueues">
-    <Type Name="JobQueue">
-      <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="JobId" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
-      <Column Name="Queue" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="FetchedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="HangFire.List" Member="Lists">
-    <Type Name="List">
-      <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="[Key]" Member="Key" Type="System.String" DbType="NVarChar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Value" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="ExpireAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="HangFire.[Schema]" Member="Schemas">
-    <Type Name="Schema">
-      <Column Name="Version" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
     </Type>
   </Table>
   <Table Name="HangFire.Server" Member="Servers">
@@ -1095,31 +771,6 @@
       <Column Name="DivisionNameEn" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
       <Column Name="ADTitle" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
       <Column Name="Userid_Line" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.ViewTRNMemoMAdvancveForm" Member="ViewTRNMemoMAdvancveForms">
-    <Type Name="ViewTRNMemoMAdvancveForm">
-      <Column Name="MemoId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="DocumentNo" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="DocumentCode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="TemplateId" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="StatusName" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="RequestDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="obj_type" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="obj_label" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="obj_attr" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="obj_desc" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="obj_value" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="row_index" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="row_count" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="col_index" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="col_label" Type="System.String" DbType="NVarChar(4000)" CanBeNull="true" />
-      <Column Name="col_desc" Type="System.String" DbType="NVarChar(4000)" CanBeNull="true" />
-      <Column Name="col_value" Type="System.String" DbType="NVarChar(4000)" CanBeNull="true" />
-      <Column Name="row_value" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="obj_column" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="obj_items" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="obj_value_item" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

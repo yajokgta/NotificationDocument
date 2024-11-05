@@ -156,10 +156,10 @@ namespace NotificationDocument
                 x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && 
                 x.col_label == "สำเนาถึงหน่วยงาน").Select(s => s.col_value).ToArray();
 
-                var emails = dbContext.MSTDepartments.Where(x => departments.Contains(x.NameEn) || departments.Contains(x.NameTh))
+                var emails = dbContext.MSTDivisions.Where(x => departments.Contains(x.NameEn) || departments.Contains(x.NameTh))
                     .Join(dbContext.ViewEmployees,
-                    dept => dept.DepartmentId,
-                    vEmp => vEmp.DepartmentId,
+                    dept => dept.DivisionId,
+                    vEmp => vEmp.DivisionId,
                     (dept, vEmp) => vEmp.Email).ToList().FindAll(a => !excludeRole.Contains(a));
 
                 var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest);

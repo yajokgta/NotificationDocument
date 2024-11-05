@@ -129,7 +129,7 @@ namespace NotificationDocument
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
             }
 
-            var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).Select(s => s.Email).ToList();
+            //var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).Select(s => s.Email).ToList();
 
             //emails = new List<string>
             //{
@@ -151,6 +151,16 @@ namespace NotificationDocument
                 var sURLToRequest = $"{ConfigurationSettings.AppSettings["TinyUrl"]}Request?MemoID={memo.MemoId}";
 
                 var effectiveDate = getValueAdvanceForm(memo.MAdvancveForm, effectiveLabel);
+
+                var departments = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && 
+                x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && 
+                x.col_label == "สำเนาถึงหน่วยงาน").Select(s => s.col_value).ToArray();
+
+                var emails = dbContext.MSTDepartments.Where(x => departments.Contains(x.NameEn) || departments.Contains(x.NameTh))
+                    .Join(dbContext.ViewEmployees,
+                    dept => dept.DepartmentId,
+                    vEmp => vEmp.DepartmentId,
+                    (dept, vEmp) => vEmp.Email).ToList();
 
                 var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest);
                 var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest);

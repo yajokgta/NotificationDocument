@@ -160,7 +160,7 @@ namespace NotificationDocument
                     .Join(dbContext.ViewEmployees,
                     dept => dept.DepartmentId,
                     vEmp => vEmp.DepartmentId,
-                    (dept, vEmp) => vEmp.Email).ToList();
+                    (dept, vEmp) => vEmp.Email).ToList().FindAll(a => !excludeRole.Contains(a));
 
                 var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest);
                 var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest);

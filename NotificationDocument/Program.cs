@@ -142,7 +142,7 @@ namespace NotificationDocument
             foreach ( var memo in memos )
             {
                 memoId = memo.MemoId;
-
+                var template = dbContext.MSTTemplates.FirstOrDefault(x => x.TemplateId == memo.TemplateId);
                 SettingContents.ForEach(x =>
                 {
                     x.Value = getValueAdvanceForm(memo.MAdvancveForm, x.FormLabel);
@@ -162,8 +162,8 @@ namespace NotificationDocument
                     vEmp => vEmp.DivisionId,
                     (dept, vEmp) => vEmp.Email).ToList().FindAll(a => !excludeRole.Contains(a));
 
-                var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest);
-                var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest);
+                var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest, template);
+                var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest, template);
                 SendEmail(emailBody, emailSubject, emails);
             }
 
@@ -205,7 +205,7 @@ namespace NotificationDocument
             return setValue;
         }
 
-        public static string ReplaceEmail(string content, TRNMemo memo, string sURLToRequest)
+        public static string ReplaceEmail(string content, TRNMemo memo, string sURLToRequest, MSTTemplate template)
         {
             content = content
                .Replace("[TRNMemo_DocumentNo]", memo.DocumentNo)
@@ -214,6 +214,7 @@ namespace NotificationDocument
                .Replace("[TRNMemo_StatusName]", memo.StatusName)
                .Replace("[TRNMemo_CompanyName]", memo.CompanyName)
                .Replace("[TRNMemo_TemplateName]", memo.TemplateName)
+               .Replace("[TRNmemo_DocumentCode]", template.DocumentCode)
                .Replace("[URLToRequest]", String.Format("<a href='{0}'>Click</a>", sURLToRequest));
 
             //DynamicContent

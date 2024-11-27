@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
 using Newtonsoft.Json;
+using System.Web.Caching;
 
 namespace NotificationDocument
 {
@@ -119,13 +120,13 @@ namespace NotificationDocument
                     manuals.AddRange(addDays);
                 }
 
-                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
+                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("QFM-QP-TY-001") && x.StatusName == "Completed" &&
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && manuals.Contains(a.obj_value))).ToList();
             }
 
             else
             {
-                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" && x.ModifiedDate >= DateTime.Now.AddMinutes(IntervalTime) &&
+                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("QFM-QP-TY-001") && x.StatusName == "Completed" && x.ModifiedDate >= DateTime.Now.AddMinutes(IntervalTime) &&
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
             }
 
@@ -160,7 +161,14 @@ namespace NotificationDocument
                     .Join(dbContext.ViewEmployees,
                     dept => dept.DivisionId,
                     vEmp => vEmp.DivisionId,
-                    (dept, vEmp) => vEmp.Email).ToList().FindAll(a => !excludeRole.Contains(a));
+                    (dept, vEmp) => vEmp.Email).ToList();
+
+                if (!departments.Any())
+                {
+                    emails = dbContext.ViewEmployees.Select(s => s.Email).ToList();
+                }
+
+                emails.RemoveAll(r => excludeRole.Contains(r));
 
                 var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest, template);
                 var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest, template);
@@ -214,7 +222,8 @@ namespace NotificationDocument
                .Replace("[TRNMemo_StatusName]", memo.StatusName)
                .Replace("[TRNMemo_CompanyName]", memo.CompanyName)
                .Replace("[TRNMemo_TemplateName]", memo.TemplateName)
-               .Replace("[TRNmemo_DocumentCode]", template.DocumentCode)
+               .Replace("[TEMP_DocumentCode]", template.DocumentCode)
+               .Replace("[TEMP_TempName]", template.TemplateName)
                .Replace("[URLToRequest]", String.Format("<a href='{0}'>Click</a>", sURLToRequest));
 
             //DynamicContent

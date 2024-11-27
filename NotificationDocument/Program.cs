@@ -155,7 +155,7 @@ namespace NotificationDocument
 
                 var departments = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && 
                 x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && 
-                x.col_label == "สำเนาถึงหน่วยงาน").Select(s => s.col_value).ToArray();
+                x.col_label == "สำเนาถึงหน่วยงาน").Select(s => s.col_value.Trim().Replace(Environment.NewLine,"")).ToArray();
 
                 var emails = dbContext.MSTDivisions.Where(x => departments.Contains(x.NameEn) || departments.Contains(x.NameTh))
                     .Join(dbContext.ViewEmployees,

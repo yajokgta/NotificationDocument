@@ -279,6 +279,7 @@ namespace NotificationDocument
 
                     smtpClient.Send(mailMessage);
                     log.Info($"Send MemoId : {memoId} : Email sent successfully.");
+                    log.Info($"Send To : {string.Join(",",toList)}");
                 }
             }
             catch (Exception ex)

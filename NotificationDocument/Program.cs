@@ -142,6 +142,7 @@ namespace NotificationDocument
 
             foreach ( var memo in memos )
             {
+                log.Info($"------------");
                 memoId = memo.MemoId;
                 var template = dbContext.MSTTemplates.FirstOrDefault(x => x.TemplateId == memo.TemplateId);
                 SettingContents.ForEach(x =>
@@ -169,10 +170,12 @@ namespace NotificationDocument
                 }
 
                 emails.RemoveAll(r => excludeRole.Contains(r));
-
+                log.Info($"Send MemoId: {memo.MemoId}");
+                log.Info($"Send Divisions: {string.Join(",", departments)}");
                 var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest, template);
                 var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest, template);
                 SendEmail(emailBody, emailSubject, emails);
+                log.Info($"------------");
             }
 
             log.Info($"=============================================================================================================");

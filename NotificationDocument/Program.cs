@@ -163,7 +163,7 @@ namespace NotificationDocument
                     vEmp => vEmp.DivisionId,
                     (dept, vEmp) => vEmp.Email).ToList();
 
-                if (!departments.Any())
+                if (departments.Count() <= 0)
                 {
                     emails = dbContext.ViewEmployees.Select(s => s.Email).ToList();
                 }

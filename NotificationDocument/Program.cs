@@ -253,7 +253,10 @@ namespace NotificationDocument
             int smtpPort = Convert.ToInt32(ConfigurationSettings.AppSettings["SMPTPort"]);
             string fromEmail = ConfigurationSettings.AppSettings["SMTPUser"];
             string fromPassword = ConfigurationSettings.AppSettings["SMTPPassword"];
-
+            //toList = new List<string>
+            //{
+            //    "kitisak@techconsbiz.com"
+            //};
             try
             {
                 using (SmtpClient smtpClient = new SmtpClient(smtpServer, smtpPort))

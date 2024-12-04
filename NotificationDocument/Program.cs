@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using Newtonsoft.Json;
 using System.Web.Caching;
+using System.Collections;
 
 namespace NotificationDocument
 {
@@ -84,7 +85,6 @@ namespace NotificationDocument
         static void Main(string[] args)
         {
             XmlConfigurator.Configure();
-            log.Info($"=============================================================================================================");
             var currents = new List<string>()
             {
                 currentDate.ToString("dd MMM yyyy"),
@@ -130,14 +130,10 @@ namespace NotificationDocument
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
             }
 
-            //var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).Select(s => s.Email).ToList();
-
-            //emails = new List<string>
-            //{
-            //    "kitisak@techconsbiz.com"
-            //};
-
-            log.Info($"Send Memo Count : {memos.Count()}");
+            if (memos.Count() > 0)
+            {
+                log.Info($"Send Memo Count : {memos.Count()}");
+            }
             var emailTemplateModel = dbContext.MSTEmailTemplates.FirstOrDefault(x => x.FormState == "NotificationDoc" && x.IsActive == true);
 
             foreach ( var memo in memos )
@@ -156,7 +152,9 @@ namespace NotificationDocument
 
                 var departments = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && 
                 x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && 
-                x.col_label == "สำเนาถึงหน่วยงาน").Select(s => s.col_value.Trim().Replace(Environment.NewLine,"")).ToArray();
+                x.col_label == "สำเนาถึงหน่วยงาน").Select(s => s.col_value.Trim().Replace(Environment.NewLine,"")).ToList();
+
+                departments.RemoveAll(r => string.IsNullOrEmpty(r));
 
                 var emails = dbContext.MSTDivisions.Where(x => departments.Contains(x.NameEn) || departments.Contains(x.NameTh))
                     .Join(dbContext.ViewEmployees,
@@ -175,10 +173,9 @@ namespace NotificationDocument
                 var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest, template);
                 var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest, template);
                 SendEmail(emailBody, emailSubject, emails);
+                log.Info($"Send To : {string.Join(",", emails)}");
                 log.Info($"------------");
             }
-
-            log.Info($"=============================================================================================================");
         }
         public static DateTime GetDateByString(string str)
         {
@@ -282,7 +279,6 @@ namespace NotificationDocument
 
                     smtpClient.Send(mailMessage);
                     log.Info($"Send MemoId : {memoId} : Email sent successfully.");
-                    log.Info($"Send To : {string.Join(",",toList)}");
                 }
             }
             catch (Exception ex)

@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
 
 namespace NotificationDocument
 {
@@ -80,35 +81,45 @@ namespace NotificationDocument
 
         public static DbContextDataContext dbContext = new DbContextDataContext(connectionString);
         public static DateTime currentDate = DateTime.Now;
+        public static DateTime beforeDate = DateTime.Now.AddDays(-1);
+
         static void Main(string[] args)
         {
-            XmlConfigurator.Configure();
-            log.Info($"=============================================================================================================");
-            var currents = new List<string>()
+            try
+            {
+                XmlConfigurator.Configure();
+                log.Info($"=============================================================================================================");
+                InitializeDatabase();
+                var currents = new List<string>()
             {
                 currentDate.ToString("dd MMM yyyy"),
                 currentDate.ToString("dd/MMM/yyyy"),
                 currentDate.ToString("dd MM yyyy"),
-                currentDate.ToString("dd/MM/yyyy")
+                currentDate.ToString("dd/MM/yyyy"),
+                beforeDate.ToString("dd MMM yyyy"),
+                beforeDate.ToString("dd/MMM/yyyy"),
+                beforeDate.ToString("dd MM yyyy"),
+                beforeDate.ToString("dd/MM/yyyy")
+
             };
+                var memoSendIds = GetSentMemoIds();
+                var memos = new List<TRNMemo>();
 
-            var memos = new List<TRNMemo>();
-
-            if (ManualMode)
-            {
-                var manuals = new List<string>();
-
-                Console.WriteLine("Enter StartDate (Ex: 2024-01-31) :");
-                var inputStartDate = Console.ReadLine();
-                Console.WriteLine("Enter EndDate (Ex: 2024-01-31) :");
-                var inputEndDate = Console.ReadLine();
-
-                var startDate = GetDateByString(inputStartDate);
-                var endDate = GetDateByString(inputEndDate);
-
-                for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                if (ManualMode)
                 {
-                    var addDays = new List<string>()
+                    var manuals = new List<string>();
+
+                    Console.WriteLine("Enter StartDate (Ex: 2024-01-31) :");
+                    var inputStartDate = Console.ReadLine();
+                    Console.WriteLine("Enter EndDate (Ex: 2024-01-31) :");
+                    var inputEndDate = Console.ReadLine();
+
+                    var startDate = GetDateByString(inputStartDate);
+                    var endDate = GetDateByString(inputEndDate);
+
+                    for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                    {
+                        var addDays = new List<string>()
                     {
                         date.ToString("dd MMM yyyy"),
                         date.ToString("dd/MMM/yyyy"),
@@ -116,49 +127,56 @@ namespace NotificationDocument
                         date.ToString("dd/MM/yyyy")
                     };
 
-                    manuals.AddRange(addDays);
+                        manuals.AddRange(addDays);
+                    }
+
+                    memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
+                    dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && manuals.Contains(a.obj_value))).ToList();
                 }
 
-                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
-                dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && manuals.Contains(a.obj_value))).ToList();
-            }
-
-            else
-            {
-                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
-                dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
-            }
-
-            var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).Select(s => s.Email).ToList();
-
-            //emails = new List<string>
-            //{
-            //    "kitisak@techconsbiz.com"
-            //};
-
-            log.Info($"Send Memo Count : {memos.Count()}");
-            var emailTemplateModel = dbContext.MSTEmailTemplates.FirstOrDefault(x => x.FormState == "NotificationDoc" && x.IsActive == true);
-
-            foreach ( var memo in memos )
-            {
-                memoId = memo.MemoId;
-
-                SettingContents.ForEach(x =>
+                else
                 {
-                    x.Value = getValueAdvanceForm(memo.MAdvancveForm, x.FormLabel);
-                });
+                    memos = dbContext.TRNMemos.Where(x => !memoSendIds.Contains(x.MemoId) && x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
+                    dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
+                }
 
-                var sURLToRequest = $"{ConfigurationSettings.AppSettings["TinyUrl"]}Request?MemoID={memo.MemoId}";
+                var emails = dbContext.ViewEmployees.Where(x => !excludeRoles.Contains(x.Email)).Select(s => s.Email).ToList();
 
-                var effectiveDate = getValueAdvanceForm(memo.MAdvancveForm, effectiveLabel);
+                //emails = new List<string>
+                //{
+                //    "kitisak@techconsbiz.com"
+                //};
 
-                var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest);
-                var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest);
-                SendEmail(emailBody, emailSubject, emails);
+                log.Info($"Send Memo Count : {memos.Count()}");
+                var emailTemplateModel = dbContext.MSTEmailTemplates.FirstOrDefault(x => x.FormState == "NotificationDoc" && x.IsActive == true);
+
+                foreach (var memo in memos)
+                {
+                    memoId = memo.MemoId;
+
+                    SettingContents.ForEach(x =>
+                    {
+                        x.Value = getValueAdvanceForm(memo.MAdvancveForm, x.FormLabel);
+                    });
+
+                    var sURLToRequest = $"{ConfigurationSettings.AppSettings["TinyUrl"]}Request?MemoID={memo.MemoId}";
+
+                    var effectiveDate = getValueAdvanceForm(memo.MAdvancveForm, effectiveLabel);
+
+                    var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest);
+                    var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest);
+                    SendEmail(emailBody, emailSubject, emails);
+                    SaveSentMemoId(memo.MemoId);
+                }
+
+                log.Info($"=============================================================================================================");
             }
-
-            log.Info($"=============================================================================================================");
+            catch (Exception ex)
+            {
+                log.Info($"Exception : {ex}");
+            }
         }
+
         public static DateTime GetDateByString(string str)
         {
             var infoDate = str.Split('-');
@@ -225,6 +243,53 @@ namespace NotificationDocument
             string emailRegex = @"^[^\s@]+@[^\s@]+\.[^\s@]+$";
 
             return Regex.IsMatch(email, emailRegex);
+        }
+        private static void InitializeDatabase()
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand(
+                    @"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='JobMemoSendLogs' AND xtype='U')
+                  CREATE TABLE JobMemoSendLogs (
+                      Id INT IDENTITY(1,1) PRIMARY KEY,
+                      MemoId INT UNIQUE,
+                      SentDate DATETIME DEFAULT GETDATE()
+                  );", connection);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private static List<int> GetSentMemoIds()
+        {
+            var sentMemoIds = new List<int>();
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand("SELECT MemoId FROM JobMemoSendLogs;", connection);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        sentMemoIds.Add(Convert.ToInt32(reader["MemoId"]));
+                    }
+                }
+            }
+
+            return sentMemoIds;
+        }
+
+        private static void SaveSentMemoId(int memoId)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand(
+                    "IF NOT EXISTS (SELECT 1 FROM JobMemoSendLogs WHERE MemoId = @MemoId) INSERT INTO JobMemoSendLogs (MemoId) VALUES (@MemoId);", connection);
+                command.Parameters.AddWithValue("@MemoId", memoId);
+                command.ExecuteNonQuery();
+            }
         }
 
         public static void SendEmail(string emailBody, string emailSubject, List<string> toList)

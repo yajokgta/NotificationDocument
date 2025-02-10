@@ -21,6 +21,7 @@ namespace NotificationDocument
         public static string connectionString = ConfigurationSettings.AppSettings["connectionString"];
         public static string excludeRole = "ExcludeNotification";
         public static int memoId = 0;
+
         public static List<string> excludeRoles
         {
             get
@@ -34,6 +35,7 @@ namespace NotificationDocument
                 return emails;
             }
         }
+
         public static int IntervalTime
         {
             get
@@ -51,10 +53,11 @@ namespace NotificationDocument
                 return bool.Parse(_config);
             }
         }
+
         public class SettingContentModel
         {
-            public string ReplaceKey { get; set;}
-            public string FormLabel { get; set;}
+            public string ReplaceKey { get; set; }
+            public string FormLabel { get; set; }
             public string Value { get; set; } = "";
         }
 
@@ -83,7 +86,7 @@ namespace NotificationDocument
         public static DateTime currentDate = DateTime.Now;
         public static DateTime beforeDate = DateTime.Now.AddDays(-1);
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             try
             {
@@ -91,17 +94,16 @@ namespace NotificationDocument
                 log.Info($"=============================================================================================================");
                 InitializeDatabase();
                 var currents = new List<string>()
-            {
-                currentDate.ToString("dd MMM yyyy"),
-                currentDate.ToString("dd/MMM/yyyy"),
-                currentDate.ToString("dd MM yyyy"),
-                currentDate.ToString("dd/MM/yyyy"),
-                beforeDate.ToString("dd MMM yyyy"),
-                beforeDate.ToString("dd/MMM/yyyy"),
-                beforeDate.ToString("dd MM yyyy"),
-                beforeDate.ToString("dd/MM/yyyy")
-
-            };
+                {
+                    currentDate.ToString("dd MMM yyyy"),
+                    currentDate.ToString("dd/MMM/yyyy"),
+                    currentDate.ToString("dd MM yyyy"),
+                    currentDate.ToString("dd/MM/yyyy"),
+                    beforeDate.ToString("dd MMM yyyy"),
+                    beforeDate.ToString("dd/MMM/yyyy"),
+                    beforeDate.ToString("dd MM yyyy"),
+                    beforeDate.ToString("dd/MM/yyyy")
+                };
                 var memoSendIds = GetSentMemoIds();
                 var memos = new List<TRNMemo>();
 
@@ -133,7 +135,6 @@ namespace NotificationDocument
                     memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
                     dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && manuals.Contains(a.obj_value))).ToList();
                 }
-
                 else
                 {
                     memos = dbContext.TRNMemos.Where(x => !memoSendIds.Contains(x.MemoId) && x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
@@ -225,7 +226,7 @@ namespace NotificationDocument
                .Replace("[URLToRequest]", String.Format("<a href='{0}'>Click</a>", sURLToRequest));
 
             //DynamicContent
-            foreach(var setting in SettingContents)
+            foreach (var setting in SettingContents)
             {
                 content = content.Replace(setting.ReplaceKey, setting.Value);
             }
@@ -244,6 +245,7 @@ namespace NotificationDocument
 
             return Regex.IsMatch(email, emailRegex);
         }
+
         private static void InitializeDatabase()
         {
             using (var connection = new SqlConnection(connectionString))

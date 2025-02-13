@@ -1,16 +1,16 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Net.Mail;
-using System.Net;
-using log4net.Config;
-using log4net;
-using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
-using System.IO;
-using Newtonsoft.Json;
 using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Text.RegularExpressions;
 
 namespace NotificationDocument
 {
@@ -122,12 +122,12 @@ namespace NotificationDocument
                     for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
                     {
                         var addDays = new List<string>()
-                    {
-                        date.ToString("dd MMM yyyy"),
-                        date.ToString("dd/MMM/yyyy"),
-                        date.ToString("dd MM yyyy"),
-                        date.ToString("dd/MM/yyyy")
-                    };
+                        {
+                            date.ToString("dd MMM yyyy"),
+                            date.ToString("dd/MMM/yyyy"),
+                            date.ToString("dd MM yyyy"),
+                            date.ToString("dd/MM/yyyy")
+                        };
 
                         manuals.AddRange(addDays);
                     }

@@ -138,7 +138,7 @@ namespace NotificationDocument
             }
             else
             {
-                memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("QFM-QP-TY-001") && x.StatusName == "Completed" && x.ModifiedDate >= DateTime.Now.AddMinutes(IntervalTime) &&
+                memos = dbContext.TRNMemos.Where(x => !memoSendIds.Contains(x.MemoId) && x.DocumentNo.Contains("QFM-QP-TY-001") && x.StatusName == "Completed" &&
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value))).ToList();
             }
 

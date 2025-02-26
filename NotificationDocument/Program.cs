@@ -1,18 +1,16 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Net.Mail;
-using System.Net;
-using log4net.Config;
-using log4net;
-using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
-using System.IO;
-using Newtonsoft.Json;
-using System.Web.Caching;
-using System.Collections;
 using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Text.RegularExpressions;
 
 namespace NotificationDocument
 {
@@ -94,16 +92,16 @@ namespace NotificationDocument
             InitializeDatabase();
 
             var currents = new List<string>()
-                {
-                    currentDate.ToString("dd MMM yyyy"),
-                    currentDate.ToString("dd/MMM/yyyy"),
-                    currentDate.ToString("dd MM yyyy"),
-                    currentDate.ToString("dd/MM/yyyy"),
-                    beforeDate.ToString("dd MMM yyyy"),
-                    beforeDate.ToString("dd/MMM/yyyy"),
-                    beforeDate.ToString("dd MM yyyy"),
-                    beforeDate.ToString("dd/MM/yyyy")
-                };
+            {
+                currentDate.ToString("dd MMM yyyy"),
+                currentDate.ToString("dd/MMM/yyyy"),
+                currentDate.ToString("dd MM yyyy"),
+                currentDate.ToString("dd/MM/yyyy"),
+                beforeDate.ToString("dd MMM yyyy"),
+                beforeDate.ToString("dd/MMM/yyyy"),
+                beforeDate.ToString("dd MM yyyy"),
+                beforeDate.ToString("dd/MM/yyyy")
+            };
             var memoSendIds = GetSentMemoIds();
 
             var memos = new List<TRNMemo>();

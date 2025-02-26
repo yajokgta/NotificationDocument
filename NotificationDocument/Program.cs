@@ -86,6 +86,7 @@ namespace NotificationDocument
 
         public static DbContextDataContext dbContext = new DbContextDataContext(connectionString);
         public static DateTime currentDate = DateTime.Now;
+        public static DateTime beforeDate = DateTime.Now.AddDays(-1);
 
         private static void Main(string[] args)
         {

@@ -183,6 +183,7 @@ namespace NotificationDocument
                 var emailSubject = ReplaceEmail(emailTemplateModel.EmailSubject, memo, sURLToRequest, template);
                 var emailBody = ReplaceEmail(emailTemplateModel.EmailBody, memo, sURLToRequest, template);
                 SendEmail(emailBody, emailSubject, emails);
+                SaveSentMemoId(memo.MemoId);
                 log.Info($"Send To : {string.Join(",", emails)}");
                 log.Info($"------------");
             }

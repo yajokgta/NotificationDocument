@@ -12,6 +12,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Web.Caching;
 using System.Collections;
+using System.Data.SqlClient;
 
 namespace NotificationDocument
 {
@@ -22,6 +23,7 @@ namespace NotificationDocument
         public static string connectionString = ConfigurationSettings.AppSettings["connectionString"];
         public static string excludeRole = "ExcludeNotification";
         public static int memoId = 0;
+
         public static List<string> excludeRoles
         {
             get
@@ -35,6 +37,7 @@ namespace NotificationDocument
                 return emails;
             }
         }
+
         public static int IntervalTime
         {
             get
@@ -52,10 +55,11 @@ namespace NotificationDocument
                 return bool.Parse(_config);
             }
         }
+
         public class SettingContentModel
         {
-            public string ReplaceKey { get; set;}
-            public string FormLabel { get; set;}
+            public string ReplaceKey { get; set; }
+            public string FormLabel { get; set; }
             public string Value { get; set; } = "";
         }
 
@@ -82,7 +86,8 @@ namespace NotificationDocument
 
         public static DbContextDataContext dbContext = new DbContextDataContext(connectionString);
         public static DateTime currentDate = DateTime.Now;
-        static void Main(string[] args)
+
+        private static void Main(string[] args)
         {
             XmlConfigurator.Configure();
             var currents = new List<string>()
@@ -123,7 +128,6 @@ namespace NotificationDocument
                 memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("QFM-QP-TY-001") && x.StatusName == "Completed" &&
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && manuals.Contains(a.obj_value))).ToList();
             }
-
             else
             {
                 memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("QFM-QP-TY-001") && x.StatusName == "Completed" && x.ModifiedDate >= DateTime.Now.AddMinutes(IntervalTime) &&
@@ -136,7 +140,7 @@ namespace NotificationDocument
             }
             var emailTemplateModel = dbContext.MSTEmailTemplates.FirstOrDefault(x => x.FormState == "NotificationDoc" && x.IsActive == true);
 
-            foreach ( var memo in memos )
+            foreach (var memo in memos)
             {
                 log.Info($"------------");
                 memoId = memo.MemoId;
@@ -150,9 +154,9 @@ namespace NotificationDocument
 
                 var effectiveDate = getValueAdvanceForm(memo.MAdvancveForm, effectiveLabel);
 
-                var departments = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId && 
-                x.obj_label == "หน่วยงานที่เกี่ยวข้อง" && 
-                x.col_label == "สำเนาถึงหน่วยงาน").Select(s => s.col_value.Trim().Replace(Environment.NewLine,"")).ToList();
+                var departments = dbContext.TRNMemoForms.Where(x => x.MemoId == memo.MemoId &&
+                x.obj_label == "หน่วยงานที่เกี่ยวข้อง" &&
+                x.col_label == "สำเนาถึงหน่วยงาน").Select(s => s.col_value.Trim().Replace(Environment.NewLine, "")).ToList();
 
                 departments.RemoveAll(r => string.IsNullOrEmpty(r));
 
@@ -177,6 +181,7 @@ namespace NotificationDocument
                 log.Info($"------------");
             }
         }
+
         public static DateTime GetDateByString(string str)
         {
             var infoDate = str.Split('-');
@@ -227,7 +232,7 @@ namespace NotificationDocument
                .Replace("[URLToRequest]", String.Format("<a href='{0}'>Click</a>", sURLToRequest));
 
             //DynamicContent
-            foreach(var setting in SettingContents)
+            foreach (var setting in SettingContents)
             {
                 content = content.Replace(setting.ReplaceKey, setting.Value);
             }
@@ -245,6 +250,54 @@ namespace NotificationDocument
             string emailRegex = @"^[^\s@]+@[^\s@]+\.[^\s@]+$";
 
             return Regex.IsMatch(email, emailRegex);
+        }
+
+        private static void InitializeDatabase()
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand(
+                    @"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='JobMemoSendLogs' AND xtype='U')
+                  CREATE TABLE JobMemoSendLogs (
+                      Id INT IDENTITY(1,1) PRIMARY KEY,
+                      MemoId INT UNIQUE,
+                      SentDate DATETIME DEFAULT GETDATE()
+                  );", connection);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private static List<int> GetSentMemoIds()
+        {
+            var sentMemoIds = new List<int>();
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand("SELECT MemoId FROM JobMemoSendLogs;", connection);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        sentMemoIds.Add(Convert.ToInt32(reader["MemoId"]));
+                    }
+                }
+            }
+
+            return sentMemoIds;
+        }
+
+        private static void SaveSentMemoId(int memoId)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand(
+                    "IF NOT EXISTS (SELECT 1 FROM JobMemoSendLogs WHERE MemoId = @MemoId) INSERT INTO JobMemoSendLogs (MemoId) VALUES (@MemoId);", connection);
+                command.Parameters.AddWithValue("@MemoId", memoId);
+                command.ExecuteNonQuery();
+            }
         }
 
         public static void SendEmail(string emailBody, string emailSubject, List<string> toList)

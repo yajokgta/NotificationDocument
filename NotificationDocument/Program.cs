@@ -90,6 +90,8 @@ namespace NotificationDocument
         private static void Main(string[] args)
         {
             XmlConfigurator.Configure();
+            InitializeDatabase();
+
             var currents = new List<string>()
             {
                 currentDate.ToString("dd MMM yyyy"),

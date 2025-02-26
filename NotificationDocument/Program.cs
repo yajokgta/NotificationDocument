@@ -94,12 +94,17 @@ namespace NotificationDocument
             InitializeDatabase();
 
             var currents = new List<string>()
-            {
-                currentDate.ToString("dd MMM yyyy"),
-                currentDate.ToString("dd/MMM/yyyy"),
-                currentDate.ToString("dd MM yyyy"),
-                currentDate.ToString("dd/MM/yyyy")
-            };
+                {
+                    currentDate.ToString("dd MMM yyyy"),
+                    currentDate.ToString("dd/MMM/yyyy"),
+                    currentDate.ToString("dd MM yyyy"),
+                    currentDate.ToString("dd/MM/yyyy"),
+                    beforeDate.ToString("dd MMM yyyy"),
+                    beforeDate.ToString("dd/MMM/yyyy"),
+                    beforeDate.ToString("dd MM yyyy"),
+                    beforeDate.ToString("dd/MM/yyyy")
+                };
+            var memoSendIds = GetSentMemoIds();
 
             var memos = new List<TRNMemo>();
 

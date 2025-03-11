@@ -120,7 +120,7 @@ namespace NotificationDocument
             {
                 memos = dbContext.TRNMemos.Where(x => x.DocumentNo.Contains("DAR") && x.StatusName == "Completed" &&
                 dbContext.TRNMemoForms.Any(a => x.MemoId == a.MemoId && a.obj_label == effectiveLabel && currents.Contains(a.obj_value)) &&
-                dbContext.LogSentEmails.Any(a => x.MemoId != a.MemoId)).ToList();
+                !dbContext.LogSentEmails.Any(a => x.MemoId == a.MemoId)).ToList();
                 log.Info($"Date Format: {string.Join(",", currents)}");
             }
 

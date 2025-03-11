@@ -327,7 +327,7 @@ namespace NotificationDocument
 
             foreach (string topersonName in topersonNames)
             {
-                ViewEmployee TomatchingEmployee = AllEmployee.FirstOrDefault(e => e.NameTh == topersonName.Trim());
+                ViewEmployee TomatchingEmployee = AllEmployee.FirstOrDefault(e => e.NameTh == topersonName);
                 if (TomatchingEmployee != null)
                 {
                     string email = TomatchingEmployee.Email;
@@ -339,7 +339,7 @@ namespace NotificationDocument
 
             foreach (string ccpersonName in ccpersonNames)
             {
-                ViewEmployee CcmatchingEmployee = AllEmployee.FirstOrDefault(e => e.NameTh == ccpersonName.Trim());
+                ViewEmployee CcmatchingEmployee = AllEmployee.FirstOrDefault(e => e.NameTh == ccpersonName);
                 if (CcmatchingEmployee != null)
                 {
                     string email = CcmatchingEmployee.Email;

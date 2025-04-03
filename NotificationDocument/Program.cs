@@ -73,7 +73,7 @@ namespace NotificationDocument
         public static DateTime currentDate = DateTime.Now;
         static void Main(string[] args)
         {
-            var memoa = dbContext.TRNMemos.Where(x => dbContext.TRNUsageLogs.Any(a => a.Note01 == "5" && a.Note02 == "JOB_NOTI")).ToList();
+            //var memoa = dbContext.TRNMemos.Where(x => dbContext.TRNUsageLogs.Any(a => a.Note01 == "5" && a.Note02 == "JOB_NOTI")).ToList();
             XmlConfigurator.Configure();
             log.Info($"=============================================================================================================");
             var currents = new List<string>()
@@ -159,6 +159,7 @@ namespace NotificationDocument
                 {
                     additionalEmployees.Add(viewEmployeeQuery.FirstOrDefault(e => e.EmployeeId == memo.RequesterId));
                     additionalEmployees.Add(viewEmployeeQuery.FirstOrDefault(e => e.EmployeeId == memo.CreatorId));
+                    employees.AddRange(additionalEmployees);
                 }
 
                 void ProcessAndAddCcPersons()
@@ -282,7 +283,7 @@ namespace NotificationDocument
             savetblog.DocumentCode = memo.DocumentCode;
             savetblog.MemoSubject = memo.MemoSubject;
             savetblog.RNameTh = memo.RNameTh;
-            savetblog.RequestDate = memo.RequestDate;
+            savetblog.RequestDate = memo.RequestDate; 
             savetblog.LastActionBy = memo.LastActionBy;
             dbContext.LogSentEmails.InsertOnSubmit(savetblog);
             dbContext.SubmitChanges();
@@ -294,6 +295,7 @@ namespace NotificationDocument
             employees.Distinct();
 
             log.Info($"Send : {string.Join("|", employees.Select(s => s.Email))}");
+
             var AllEmployee = dbContext.ViewEmployees.Where(x => x.IsActive == true);
             DateTime sentDatetime = DateTime.Now;
             string formattedDate = sentDatetime.ToString("dddd, MMMM dd, yyyy h:mm:ss tt");

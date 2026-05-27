@@ -194,23 +194,10 @@ namespace NotificationDocument
                 }
                 else if (promulgation == "เฉพาะหน่วยงาน")
                 {
-                    if (!string.IsNullOrEmpty(buGroup))
-                    {
-                        AddLineApproveEmployees();
+                    AddLineApproveEmployees();
 
-                        var buGroupId = dbContext.MSTDepartments.FirstOrDefault(x => x.NameEn.Contains(buGroup) || x.NameTh.Contains(buGroup))?.DepartmentId ?? 0;
-                        var deptBelows = GetDepartmentBelows(buGroupId);
-
-                        employees.AddRange(deptBelows.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))
-                                    .Join(viewEmployeeQuery.ToList(), bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
-                    }
-                    else
-                    {
-                        AddLineApproveEmployees();
-
-                        employees.AddRange(dbContext.MSTDepartments.Where(x => x.NameEn.Contains(department) || x.NameTh.Contains(department))
-                            .Join(viewEmployeeQuery, bu => bu.DepartmentId, emp => emp.DepartmentId, (bu, emp) => emp).ToList());
-                    }
+                    employees.AddRange(dbContext.MSTDepartments.Where(x => departmentInTable.Contains(x.NameEn) || departmentInTable.Contains(x.NameTh))
+                                .Join(viewEmployeeQuery, dept => dept.DepartmentId, emp => emp.DepartmentId, (dept, emp) => emp).ToList());
                 }
                 else if (promulgation == "เฉพาะบุคคล")
                 {
